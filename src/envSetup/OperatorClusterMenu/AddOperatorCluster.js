@@ -4,6 +4,17 @@ import history from "../../History"
 import {Form, Input, Button, Select, Typography , Radio, Space} from 'antd';
 import '../../styling/Styletable.css';
 const {Option} = Select;
+
+const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
+    }
+  };
 class AddOperatorCluster extends Component{
 
     constructor(props){
@@ -78,7 +89,7 @@ class AddOperatorCluster extends Component{
         this.setState({ [e.target.name]: e.target.value },
             );
         }
-
+        
         
     // saveUser = (e) => {
     //     e.preventDefault();
@@ -165,12 +176,16 @@ class AddOperatorCluster extends Component{
                         <label class="mandatory" >* Denotes Mandatory Fields</label>
                     </fieldset>
                 </form> */}
+                <div className="abc">
+                <div className="formalign">
                 <Form name="basic" initialValues={{remember:true}}
                 ref={this.formRef} 
-                className='formset'>
+                // className='formset'
+                {...formItemLayout}>
                 <Form.Item 
                     label = "Cluster Name"
                     name = "cluster_name"
+                    labelAlign="left"
                     rules = {[{ 
                         required: true, 
                         message: 'Please input your Cluster Name!',
@@ -182,7 +197,7 @@ class AddOperatorCluster extends Component{
                             type="text" 
                             placeholder = "Enter cluster name..."
                             name="cluster_name"
-                            
+                            labelAlign="left"
                             value={this.state.cluster_name} 
                             onChange={this.onChange} 
                         />
@@ -190,7 +205,7 @@ class AddOperatorCluster extends Component{
                     <Form.Item
                         label = "Cluster Type"
                         name = "cluster_type"
-
+                        labelAlign="left"
                         rules = {[{ 
                             required: true, 
                             message: 'Please input your Cluster Type!',
@@ -198,6 +213,7 @@ class AddOperatorCluster extends Component{
                         ]}>
                     <Radio.Group name="cluster_type"  onChange={this.onChangeradio} 
                     // value={this.state.value}
+                    labelAlign="left"
                     >
                         <Radio value={1} >Default</Radio>
                         <Radio value={2}>Roaming</Radio>
@@ -208,6 +224,7 @@ class AddOperatorCluster extends Component{
                     <Form.Item
                     label="Operator"
                     name="operator_ids"
+                    labelAlign="left"
                     rules = {[{ 
                         required: true, 
                         message: 'Please select your operator Name!',
@@ -215,6 +232,7 @@ class AddOperatorCluster extends Component{
                     ]}>
                     <Select 
                         name="operator_ids"
+                        labelAlign="left"
                         style={{ width: "300px" }}
                         placeholder="Click here and Please select the operator"
                         onChange={this.handleDropdownChangeOperatorId}
@@ -226,7 +244,7 @@ class AddOperatorCluster extends Component{
                     </Select>
                     </Form.Item>
                     
-                    <Form.Item className="buttonset"> 
+                    <Form.Item labelAlign="center"> 
                         <Space>
           <Button type="primary" 
           onClick={this.saveUser} 
@@ -238,6 +256,8 @@ class AddOperatorCluster extends Component{
 
 
                 </Form>
+                </div>
+                </div>
             </div>
         );
     }

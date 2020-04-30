@@ -5,6 +5,16 @@ import '../../styling/Styletable.css';
 import { Form, Input, Select, Button, Space } from 'antd';
 
 const {Option} = Select;
+const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
+    }
+  };
 class AddLCRProfile extends Component{
 
     constructor(props){
@@ -101,11 +111,14 @@ class AddLCRProfile extends Component{
             <div>
                 
               <div className='topline'>Add LCR List</div>
+              <div className="abc">
+                <div className="formalign">
                 <Form name="basic" initialValues={{remember:true}}
-                ref={this.formRef} className="formset">
+                ref={this.formRef} {...formItemLayout}>
                     <Form.Item
                     label = "Lcr Name"
                     name = "lcr_name"
+                    labelAlign="left"
                     rules = {[{ 
                         required: true, 
                         message: 'Please input your Cluster Name!',
@@ -116,14 +129,15 @@ class AddLCRProfile extends Component{
                             className="inputset"
                             placeholder = "Enter lcr name..."
                             name="lcr_name"
+                            labelAlign="left"
                             value={this.state.lcr_name} 
                             onChange={this.onChange} 
                         />
                     </Form.Item>
                     <Form.Item
-                    label="LCR Type" name="lcr_type"  rules = {[{required:true}]}>
+                    label="LCR Type" name="lcr_type" labelAlign="left" rules = {[{required:true}]}>
                         <Select placeholder="--select--" onChange={this.handleDropdownChangeLCRType}
-                        style={{width:"300px"}}>
+                        style={{width:"300px"}} labelAlign="left">
                             <Option value="0">Default LCR</Option>
                             <Option value= "1" >SC_MT</Option>
                             <Option value="3">SPEC_LCR</Option>
@@ -135,6 +149,7 @@ class AddLCRProfile extends Component{
                     <Form.Item
                      label = "Third Party"
                      name = "third_supp_retry"
+                     labelAlign="left"
                      rules = {[{ 
                          
                          message: 'Please input your third party Name!',
@@ -143,6 +158,7 @@ class AddLCRProfile extends Component{
                          <Input 
                              type="text" 
                              className="inputset"
+                             labelAlign="left"
                              placeholder = "Enter a number"
                              name="third_supp_retry"
                              value={this.state.third_party_supp} 
@@ -160,6 +176,8 @@ class AddLCRProfile extends Component{
           </Space>
                     </Form.Item>
                 </Form>
+                </div>
+                </div>
             </div>
             // <div>
             //     <form>

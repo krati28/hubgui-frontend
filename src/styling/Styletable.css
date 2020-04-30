@@ -12,9 +12,9 @@
   text-align: center;
 }
 
-#students tr:nth-child(even){background-color: #f2f2f2;}
+/* #students tr:nth-child(even){background-color: #f2f2f2;} */
 
-#students tr:hover {background-color: #ddd;}
+/* #students tr:hover {background-color: #ddd;} */
 
 #students th {
   padding-top: 10px;
@@ -43,7 +43,6 @@
   background-color: lightgray;
   text-align: center;
   color: black;
-  height: ;
 }
 /*sets the margins for form*/
 .formset{
@@ -56,6 +55,20 @@
   width: 300px;
 }
 
-.buttonset{
-  align-content: center;
+/*sets form alignment*/
+.formalign{
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+
 }
+
+
+.abc{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

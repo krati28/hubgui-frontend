@@ -128,6 +128,7 @@ class RedirectionList extends Component{
                     columns={columns}
                     dataSource={this.state.users}
                     bordered
+                    id="students"
                     onChange={this.handleChange}
                 /></Form.Item>
                 </Form>

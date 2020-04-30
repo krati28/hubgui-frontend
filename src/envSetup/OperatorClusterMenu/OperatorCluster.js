@@ -194,7 +194,7 @@ class OperatorCluster extends Component{
                 </Button>
                 </Form.Item>
 
-                <Form.Item 
+                {/* <Form.Item 
                 label = "Search"
                 name = "search">
                     <Search placeholder="input search text"
@@ -210,7 +210,7 @@ class OperatorCluster extends Component{
                         <Radio value={2}>Cluster Id</Radio>
 
                     </Radio.Group>
-                </Form.Item>
+                </Form.Item> */}
             <Form.Item><Table
              columns={columns} 
              dataSource={this.state.users} 

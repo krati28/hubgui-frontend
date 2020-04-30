@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Typography , Form} from 'antd';
 
+import '../../styling/Styletable.css';
 const {Title} = Typography;
 
 class DealManagement extends Component{

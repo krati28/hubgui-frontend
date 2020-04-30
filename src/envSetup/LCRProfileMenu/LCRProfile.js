@@ -238,7 +238,7 @@ class LCRProfile extends Component{
                 </Button>
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
             label = "Search"
             name = "searchlcr">
               <Search placeholder="input search text"
@@ -255,7 +255,7 @@ class LCRProfile extends Component{
 
                     </Radio.Group>
 
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item><Table 
         // rowSelection={rowSelection}
          columns={columns} 
