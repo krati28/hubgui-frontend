@@ -2,8 +2,11 @@ import React, { Component } from 'react'
 import PCDService from "../../service/PCDService";
 import history from "../../History"
 //import '../../Styling/Styletable.css';
-import {Table ,Button} from "antd"
+import {Table ,Button, Form} from "antd"
 import {  EditFilled , PlusCircleFilled,  DeleteFilled } from '@ant-design/icons';
+
+
+//const npvalue={0:"Unknown","1":"ISDN","2":"Telephony"}
 
 class Pcddetails extends Component {
 
@@ -17,6 +20,8 @@ class Pcddetails extends Component {
         this.editPcd = this.editPcd.bind(this);
        this.addPcd = this.addPcd.bind(this);
         this.reloadPcdList = this.reloadPcdList.bind(this);
+        this.mapnp=this.mapnp.bind(this);
+        this.mapssn=this.mapssn.bind(this);
     }
 
     componentDidMount() {
@@ -63,9 +68,35 @@ this.setState({
 });
 };
 
+mapnp=(np) =>{
+    switch(np){
+        case 0:np="Unkown";break;
+        case 1:np="ISDN";break;
+        case 2:np="Telephony(E.164,E.163)";break;
+        case 3:np="Data(X.121)";break;
+        case 4:np="Telex(F.69)";break;
+        case 5:np="Maritime Mobile";break;
+        case 6:np="Land Mobile";break;
+        case 7:np="Private";break;
+        case 13:np="ANSI SS7 PC and SSN";break;
+        case 14:np="Internet(IP)";break;
+        case 15:np="Extension";
+    }
+    return np;
+}
+mapssn=(ssn)=>{
+    switch(ssn){
+        case 6:ssn="HLR";break;
+        case 7:ssn="VLR";break;
+        case 8:ssn="MSC";break;
+        case 253:ssn="FNR";
+    }
+    return ssn;
+}
     render(){
         let { sortedInfo} = this.state;
         sortedInfo = sortedInfo || {};
+        
         const columns = [
             {
                 title: 'Point Code',
@@ -109,9 +140,9 @@ this.setState({
             },  
             {
             title: 'NP',
-            dataIndex: 'np',
+            dataIndex:'np',
             key: 'np',
-            
+            render :np =>this.mapnp(np),
             },
             {
             title: 'RI',
@@ -122,6 +153,7 @@ this.setState({
             title: 'SSN',
             dataIndex: 'ssn',
             key: 'ssn',
+            render :ssn =>this.mapssn(ssn),
             } ,
             {
             title: 'PC Status',
@@ -149,23 +181,27 @@ this.setState({
             }
         ];
         return(
-            <div  style={{float:"left"}}>
-            
-                <h2>Point Code Details List</h2>
+            <div  >
                 
-               <Button  icon={<PlusCircleFilled/>} onClick={() => this.addPcd()}>add
-                </Button><br /><br/>
-                <div  style={{float:"left"}}>
+              <div className='topline'>Point Code Details</div>
+                <Form className="formset">
+                    <Form.Item>
+               <Button  icon={<PlusCircleFilled/>} onClick={() => this.addPcd()}>ADD
+                </Button>
+                </Form.Item>
+                <Form.Item >
                <Table
              columns={columns} 
              dataSource={this.state.pcd} 
-             //id="students"
+             id="students"
              bordered 
              onChange={this.handleChange}  />
-             </div>
+             </Form.Item>
+             </Form>
           </div>
         );
     }
 }
 
 export default Pcddetails;
+

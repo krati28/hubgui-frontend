@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import PCDService from "../../service/PCDService";
-import {Form, Input, Button, Select, Typography} from 'antd';
+import {Form, Input, Button, Select, Typography, Space} from 'antd';
+
+import '../../styling/Styletable.css';
 const {Option} = Select;
 const {Title} = Typography;
 
 class AddPCDetails extends Component{
     constructor(props){
+        console.log("Here ", props)
         super(props);
         this.state ={
             ptcode_id:'',
@@ -25,6 +28,7 @@ class AddPCDetails extends Component{
         this.handleDropdownChangeSSN = this.handleDropdownChangeSSN.bind(this);
         this.handleDropdownChangePCStatus=this.handleDropdownChangePCStatus.bind(this);
         this.loadPcd=this.loadPcd.bind(this);
+        this.formRef = React.createRef();
     }
     componentDidMount() {
         this.loadPcd();
@@ -37,15 +41,50 @@ class AddPCDetails extends Component{
                 this.setState({
                 ptcode_id: pcds.ptcode_id,
                 point_code: pcds.point_code,
-            operator_name: pcds.operator_name,
-            operator_country: pcds.operator_country,
-            sap_id:pcds.sap_id,
-            tt: pcds.tt,
-            np: pcds.np,
-            ssn:pcds.ssn,
-            status: pcds.status,
-            delay:pcds.delay,
-                })
+                operator_name: pcds.operator_name,
+                operator_country: pcds.operator_country,
+                sap_id:pcds.sap_id,
+                tt: pcds.tt,
+                np: pcds.np,
+                ssn:pcds.ssn,
+                status: pcds.status,
+                delay:pcds.delay,
+                }, () => console.log(this.state));
+
+                switch(pcds.np){
+                    case 0:pcds.np="Unkown";break;
+                    case 1:pcds.np="ISDN";break;
+                    case 2:pcds.np="Telephony(E.164,E.163)";break;
+                    case 3:pcds.np="Data(X.121)";break;
+                    case 4:pcds.np="Telex(F.69)";break;
+                    case 5:pcds.np="Maritime Mobile";break;
+                    case 6:pcds.np="Land Mobile";break;
+                    case 7:pcds.np="Private";break;
+                    case 13:pcds.np="ANSI SS7 PC and SSN";break;
+                    case 14:pcds.np="Internet(IP)";break;
+                    case 15:pcds.np="Extension";break;
+                }
+                switch(pcds.ssn){
+                    case 6:pcds.ssn="HLR";break;
+                    case 7:pcds.ssn="VLR";break;
+                    case 8:pcds.ssn="MSC";break;
+                    case 253:pcds.ssn="FNR";break;
+                }
+                
+
+            
+                this.formRef.current.setFieldsValue({
+                    ptcode_id: pcds.ptcode_id,
+                    point_code: pcds.point_code,
+                    operator_name: pcds.operator_name,
+                    operator_country: pcds.operator_country,
+                    sap_id:pcds.sap_id,
+                    tt: pcds.tt,
+                    np: pcds.np,
+                    ssn:pcds.ssn,
+                    status: pcds.status,
+                    delay:pcds.delay,
+                });
             });
             
     }
@@ -97,12 +136,12 @@ class AddPCDetails extends Component{
               
               
         return(
-            <div style={{float:"left"}}>
-                <br/>
-                <Title level={4}>Add PointCode Details</Title>
-                <br/>
-                <Form name="basic" 
-                initialValues={{ remember: true }}>
+            <div >
+                
+              <div className='topline'>Add Point Code Details</div>
+                <Form name="basic"  ref={this.formRef}
+                initialValues={{ remember: true }}
+                className="formset">
                 <Form.Item 
                         label = "Point Code"
                         name = "point_code"
@@ -112,7 +151,8 @@ class AddPCDetails extends Component{
             },
                     ]}
                     >
-                <Input type="text" name="point_code" value={this.state.point_code} onChange={this.onChange} />
+                <Input className="inputset"
+                type="text" name="point_code" value={this.state.point_code} onChange={this.onChange} />
                 </Form.Item>
                 <Form.Item 
                         label = "Operator Name"
@@ -123,7 +163,8 @@ class AddPCDetails extends Component{
             },
                     ]}
                     >
-                <Input type="text" name="operator_name" value={this.state.operator_name} onChange={this.onChange} />
+                <Input className="inputset"
+                type="text" name="operator_name" value={this.state.operator_name} onChange={this.onChange} />
                 </Form.Item>
                 
                 <Form.Item 
@@ -135,7 +176,8 @@ class AddPCDetails extends Component{
             },
                     ]}
                     >
-                <Input type="text" name="operator_country" value={this.state.operator_country} onChange={this.onChange} />
+                <Input className="inputset" 
+                type="text" name="operator_country" value={this.state.operator_country} onChange={this.onChange} />
                 </Form.Item>
 
                 <Form.Item 
@@ -145,7 +187,8 @@ class AddPCDetails extends Component{
                             required: true}
                     ]}
                     >
-                <Input type="text" name="sap_id" value={this.state.sap_id} onChange={this.onChange} />
+                <Input className="inputset"
+                type="text" name="sap_id" value={this.state.sap_id} onChange={this.onChange} />
                 </Form.Item>
                 
                 <Form.Item 
@@ -153,11 +196,13 @@ class AddPCDetails extends Component{
                         name = "tt"
             rules = {[{ required: true}]}>
            
-                <Input type="text" name="tt" value={this.state.tt} onChange={this.onChange} />
+                <Input className="inputset"
+                 type="text" name="tt" value={this.state.tt} onChange={this.onChange} />
                 </Form.Item>
                 
             <Form.Item label="NP" name="np"  rules = {[{required:true}]}>
-                <Select placeholder="--select--" onChange={this.handleDropdownChangeNP}>
+                <Select placeholder="--select--" onChange={this.handleDropdownChangeNP}
+                style={{width:"300px"}}>
                 <Option value="0">Unknown</Option>
                 <Option value= "1" >ISDN</Option>
                 <Option value="2">Telephony(E.164,E.163)</Option>
@@ -179,7 +224,8 @@ class AddPCDetails extends Component{
                             required: true}]}>
               
                     
-                <Select placeholder="--select--" onChange={this.handleDropdownChangeSSN}>
+                <Select placeholder="--select--" onChange={this.handleDropdownChangeSSN}
+                style={{width:"300px"}}>
                 <Option value="6">HLR</Option>
                 <Option value="7">VLR</Option>
                 <Option value="8">MSC</Option>
@@ -188,7 +234,8 @@ class AddPCDetails extends Component{
 
             </Form.Item>
             <Form.Item label="PC Status" name="status" rules = {[{required:true}]}>
-                <Select placeholder="--select--" onChange={this.handleDropdownChangePCStatus}>
+                <Select placeholder="--select--" onChange={this.handleDropdownChangePCStatus}
+                style={{width:"300px"}}>
                 <Option value="A">Active</Option>
                 <Option value="I">Inactive</Option>
                 </Select>
@@ -200,15 +247,18 @@ class AddPCDetails extends Component{
                             required: true}]}>
             
             
-                <Input type="text" name="delay" value={this.state.delay} onChange={this.onChange} />
+                <Input className="inputset"
+                type="text" name="delay" value={this.state.delay} onChange={this.onChange} />
             </Form.Item>
                     
 
                     <Form.Item > 
+                        <Space>
           <Button type="primary" onClick={this.savePointCodeDetails} disabled={!this.state.point_code 
             || !this.state.operator_name || !this.state.operator_country || !this.state.sap_id ||!this.state.tt||!this.state.np
             ||!this.state.ssn||!this.state.status ||!this.state.delay} >Submit</Button>
           <Button type="primary" onClick={() => this.props.history.push('/listpcd')}>Cancel</Button>
+          </Space>
                 </Form.Item>
 
         </Form>

@@ -6,7 +6,6 @@ import { Table, Button } from 'antd';
 import {  EditFilled , DeleteFilled , PlusCircleFilled, AlignCenterOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import { Form, Input, Radio } from 'antd';
-import FormItem from 'antd/lib/form/FormItem';
 import '../../styling/Styletable.css';
 
 const { Search } = Input;
@@ -82,6 +81,16 @@ class OperatorCluster extends Component{
             },
         });
     };
+
+    mapclustertype = (cluster_type) =>{
+        switch(cluster_type){
+            case 1 : cluster_type="Default"
+            break;
+            case 2: cluster_type="Roaming"
+            break;
+        }
+        return cluster_type;
+    }
     
     render(){
         let { sortedInfo } = this.state;
@@ -108,6 +117,7 @@ class OperatorCluster extends Component{
             dataIndex: 'cluster_type',
             key: 'cluster_type',
             
+            render :cluster_type =>this.mapclustertype(cluster_type),
             },
             {
             title: 'Edit',
@@ -175,22 +185,24 @@ class OperatorCluster extends Component{
             //         </tbody>
             //         </table> */}
             // </form>
-            <div>
-            <Form>
-                <FormItem>
+            <div >
+                
+              <div className='topline'>Operator List</div>
+            <Form className='formset' >
+                <Form.Item>
                 <Button  icon={<PlusCircleFilled/>} onClick={() => this.addUser()}>add
                 </Button>
-                </FormItem>
+                </Form.Item>
 
-                <FormItem 
+                <Form.Item 
                 label = "Search"
                 name = "search">
                     <Search placeholder="input search text"
                     onSearch={value => console.log(value)}
                    style={{ width: 200 }} enterButton />
-                </FormItem>
+                </Form.Item>
 
-                <FormItem>
+                <Form.Item>
                 <Radio.Group name="type"  onChange={this.onChangeradio} 
                     // value={this.state.value}
                     >
@@ -198,17 +210,17 @@ class OperatorCluster extends Component{
                         <Radio value={2}>Cluster Id</Radio>
 
                     </Radio.Group>
-                </FormItem>
-
-            </Form>
-            <Table
+                </Form.Item>
+            <Form.Item><Table
              columns={columns} 
              dataSource={this.state.users} 
-            //  id="students" 
+             id="students" 
              bordered
              onChange={this.handleChange} 
              size="small"
-             style={{width:1200}} />
+             style={{width:1000}} /></Form.Item>
+            </Form>
+            
           </div>
         //    </div> 
         );

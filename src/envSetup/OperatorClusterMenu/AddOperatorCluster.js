@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import ApiService from "../../service/ApiService";
 import history from "../../History"
-import {Form, Input, Button, Select, Typography , Radio} from 'antd';
-import FormItem from 'antd/lib/form/FormItem';
-
-
+import {Form, Input, Button, Select, Typography , Radio, Space} from 'antd';
+import '../../styling/Styletable.css';
 const {Option} = Select;
-const operator_ids = ['p1','p2','p3','p4'];
 class AddOperatorCluster extends Component{
 
     constructor(props){
@@ -15,17 +12,36 @@ class AddOperatorCluster extends Component{
              cluster_id:'',
             cluster_name: '',
             cluster_type: '',
-        
+            operator_ids:'',
+            list:[],
             selectedItems:[],
             message: null
         }
         this.saveUser = this.saveUser.bind(this);
         this.loadUser = this.loadUser.bind(this);
-        this.handleChange=this.handleChange.bind(this);
+        this.handleDropdownChangeOperatorId=this.handleDropdownChangeOperatorId.bind(this);
+        this.formRef = React.createRef();
     }
 
     componentDidMount() {
         this.loadUser();
+            let initialPlanets = [];
+                fetch('http://localhost:8101/operatordetails')
+                    .then(response => {
+                        return response.json();
+                    }).then(data => {
+                        //alert(JSON.stringify(data));
+                    initialPlanets = data.result.map((operator_name) => {
+                       
+                        return operator_name
+                        
+                    });
+                    this.setState({
+                        list: initialPlanets,
+                    });
+                   
+                });
+        
     }
 
     loadUser() {
@@ -37,6 +53,14 @@ class AddOperatorCluster extends Component{
                     cluster_id: user.cluster_id,
                 cluster_name:user.cluster_name,
                 cluster_type:user.cluster_type,
+                operator_ids:user.operator_ids,
+                }, () => console.log(this.state));
+            
+                this.formRef.current.setFieldsValue({
+                    cluster_id: user.cluster_id,
+                cluster_name:user.cluster_name,
+                cluster_type:user.cluster_type,
+                operator_ids:user.operator_ids,
                 })
             });
     }
@@ -45,23 +69,17 @@ class AddOperatorCluster extends Component{
             );
     }
 
-    handleChange=(e)=> {
-        this.setState({ ssn: e });
-  }
+  handleDropdownChangeOperatorId =(e) =>
+  {
+      this.setState({ operator_ids: e });
+    }
 
-  
-
-    // state = {
-    //     value: 1,
-    //   };
     onChangeradio = (e) =>{
         this.setState({ [e.target.name]: e.target.value },
-            // {[e.target.gender]:e.target.selectedOption}
             );
-            
-            // console.log(this.state.selectedOption)
         }
 
+        
     // saveUser = (e) => {
     //     e.preventDefault();
     //     let user = {
@@ -81,6 +99,7 @@ class AddOperatorCluster extends Component{
             let user = {
                 cluster_id:this.state.cluster_id,
                  cluster_name: this.state.cluster_name, cluster_type: this.state.cluster_type,
+                 operator_ids:this.state.operator_ids,
                  };
                 //  alert("in add ");
             ApiService.addUser(user)
@@ -93,7 +112,8 @@ class AddOperatorCluster extends Component{
             let user = {
                  cluster_id:this.state.cluster_id,
                  cluster_name: this.state.cluster_name, cluster_type: this.state.cluster_type,
-                 };
+                operator_ids:this.state.operator_ids, 
+                };
                 //  alert('in edit');
             ApiService.editUser(user)
                 .then(res => {
@@ -105,10 +125,9 @@ class AddOperatorCluster extends Component{
     }
     render(){
         
-        const { selectedItems } = this.state;
-        const filteredOptions = operator_ids.filter(o => !selectedItems.includes(o));
         return(
-            <div>
+            <div >
+                <div className='topline'>Add Operator List</div>
                 {/* <form>
                     <fieldset>
                     <label for="clustername" class="required">Cluster name:</label>
@@ -146,7 +165,9 @@ class AddOperatorCluster extends Component{
                         <label class="mandatory" >* Denotes Mandatory Fields</label>
                     </fieldset>
                 </form> */}
-                <Form name="basic" initialValues={{remember:true}}>
+                <Form name="basic" initialValues={{remember:true}}
+                ref={this.formRef} 
+                className='formset'>
                 <Form.Item 
                     label = "Cluster Name"
                     name = "cluster_name"
@@ -157,17 +178,24 @@ class AddOperatorCluster extends Component{
                     ]}
                 >
                     <Input 
+                            className="inputset"
                             type="text" 
                             placeholder = "Enter cluster name..."
                             name="cluster_name"
+                            
                             value={this.state.cluster_name} 
                             onChange={this.onChange} 
                         />
                     </Form.Item>
-                    <FormItem
+                    <Form.Item
                         label = "Cluster Type"
                         name = "cluster_type"
-                        >
+
+                        rules = {[{ 
+                            required: true, 
+                            message: 'Please input your Cluster Type!',
+                            },
+                        ]}>
                     <Radio.Group name="cluster_type"  onChange={this.onChangeradio} 
                     // value={this.state.value}
                     >
@@ -175,30 +203,37 @@ class AddOperatorCluster extends Component{
                         <Radio value={2}>Roaming</Radio>
 
                     </Radio.Group>
-                    </FormItem>
+                    </Form.Item>
 
-                    <FormItem>
-                    <Select 
+                    <Form.Item
+                    label="Operator"
                     name="operator_ids"
-                    mode="multiple"
-                    style={{ width: '100%' }}
-                    placeholder="Click here and Please select the operator"
-    // defaultValue={['a10', 'c12']}
-    onChange={this.handleChange}
-  >
-     {filteredOptions.map(item => (
-                            <Select.Option key={item} value={item}>
-                                {item}
-                            </Select.Option>
-                            ))}
-  </Select>
-                    </FormItem>
+                    rules = {[{ 
+                        required: true, 
+                        message: 'Please select your operator Name!',
+                        },
+                    ]}>
+                    <Select 
+                        name="operator_ids"
+                        style={{ width: "300px" }}
+                        placeholder="Click here and Please select the operator"
+                        onChange={this.handleDropdownChangeOperatorId}
+                        
+                    >
+                        {this.state.list.map((test) => <Option value={test.operator_name}> 
+                        {test.operator_name} </Option> )}
+                                        
+                    </Select>
+                    </Form.Item>
                     
-                    <Form.Item > 
+                    <Form.Item className="buttonset"> 
+                        <Space>
           <Button type="primary" 
           onClick={this.saveUser} 
-          disabled={!this.state.cluster_name} >Submit</Button>
+          disabled={!this.state.cluster_name  || !this.state.cluster_type || !this.state.operator_ids}
+            >Submit</Button>
           <Button type="primary" onClick={() => this.props.history.push('/environmentSetup-operatorCluster')}>Cancel</Button>
+          </Space>
                 </Form.Item>
 
 

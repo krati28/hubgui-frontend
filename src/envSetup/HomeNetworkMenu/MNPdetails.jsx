@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import MNPService from "../../service/MNPService";
-import history from "../../History"
-//import '../../Styling/Styletable.css';
-import {Table ,Button} from "antd"
+import history from "../../History";
+import '../../styling/Styletable.css';
+import {Table ,Button, Form} from "antd"
 import {  EditFilled , PlusCircleFilled,  DeleteFilled } from '@ant-design/icons';
+
 
 class MNPdetails extends Component {
     constructor(props) {
@@ -42,6 +43,7 @@ class MNPdetails extends Component {
 
     editMNP(mnp_id) {
         window.localStorage.setItem("mnp_id", mnp_id);
+        //alert(window.localStorage.getItem("mnp_id"));
         history.push('/add-mnp');
         
     }
@@ -105,16 +107,22 @@ this.setState({
         ];
         return(
             <div>
+            <div className='topline'>MNP Gateway Details</div>
+              <Form className="formset">
+                  <Form.Item>
             
                 
-               <Button  icon={<PlusCircleFilled/>} onClick={() => this.addMNP()}>add
-                </Button><br /><br/>
+               <Button  icon={<PlusCircleFilled/>} onClick={() => this.addMNP()}>ADD
+                </Button></Form.Item>
+                <Form.Item>
                <Table
              columns={columns} 
              dataSource={this.state.mnp} 
-             //id="students"
+             id="students"
              bordered 
              onChange={this.handleChange}  />
+             </Form.Item>
+             </Form>
           </div>
         );
     }
@@ -122,5 +130,3 @@ this.setState({
 
 export default MNPdetails;
 
-        
- 

@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import RedirectionListService from "../../service/RedirectionListService";
-import { Table,Button, Typography} from 'antd';
-import {EditFilled, DeleteFilled} from '@ant-design/icons'
+import { Table,Button, Typography, Form} from 'antd';
+import {EditFilled, DeleteFilled, PlusCircleFilled} from '@ant-design/icons'
 import 'antd/dist/antd.css'
-import { Input } from 'antd';
 import history from "../../History"
 import '../../styling/Styletable.css'
 
 const {Title} = Typography;
-const { Search } = Input;
 
 class RedirectionList extends Component{
 
@@ -45,7 +43,7 @@ class RedirectionList extends Component{
 
     editUser(id){
         window.localStorage.setItem("id", id);
-        alert("list .. "+window.localStorage.getItem("id"));
+        // alert("list .. "+window.localStorage.gsetItem("id"));
         // console.log()
         history.push('/add-redirectionList');
     }
@@ -118,19 +116,21 @@ class RedirectionList extends Component{
             }
         ];
         
-        
         return(
             <div >
-                <br/>
-                <Title level={4}> This is redirection list page</Title>
-                <br/>
-                <Button type="primary" onClick={() => this.addUser()}> Add user</Button>
-                <Table 
+                
+              <div className='topline'>Redirection List</div>
+            <Form className='formset' >
+                <Form.Item>
+                <Button icon={<PlusCircleFilled/>} onClick={() => this.addUser()}> Add user</Button></Form.Item>
+                <Form.Item>
+                    <Table 
                     columns={columns}
                     dataSource={this.state.users}
                     bordered
                     onChange={this.handleChange}
-                />
+                /></Form.Item>
+                </Form>
             </div>
         )
             

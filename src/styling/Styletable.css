@@ -1,24 +1,61 @@
 #students {
-    text-align: center;
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    border: 3px solid #ddd;
-    width: 100%;
-  }
-  
-  #students td, #students th {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
-  #students tr:nth-child(even){background-color: #f2f2f2;}
-  
-  #students tr:hover {background-color: #ddd;}
-  
-  #students th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: center;
-    background-color: #696969;
-    color: white;
-  }
+  text-align: center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  border: 3px solid #ddd;
+  width: 100%;
+}
+
+#students td, #students th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+#students tr:nth-child(even){background-color: #f2f2f2;}
+
+#students tr:hover {background-color: #ddd;}
+
+#students th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  background-color: #696969;
+  color: white;
+}
+
+/*header data settings*/
+.headerdata{
+  color: white;
+}
+
+/*sider data setting*/
+.siderdata{
+  background-color: grey;
+}
+
+.sidebar{
+  background-color: white;
+}
+
+/*sets the top bar of content component*/
+.topline {
+  background-color: lightgray;
+  text-align: center;
+  color: black;
+  height: ;
+}
+/*sets the margins for form*/
+.formset{
+  margin-top: 20px;
+  margin-left: 20px
+}
+
+/*sets input width*/
+.inputset{
+  width: 300px;
+}
+
+.buttonset{
+  align-content: center;
+}

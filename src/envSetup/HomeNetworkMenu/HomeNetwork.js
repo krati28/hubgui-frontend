@@ -4,6 +4,7 @@ import history from "../../History";
 import {PlusCircleFilled} from '@ant-design/icons';
 
 import {Form, Button, Select,Table} from 'antd';
+import '../../styling/Styletable.css';
 const {Option} = Select;
 
 class HomeNetwork extends Component{
@@ -38,21 +39,21 @@ class HomeNetwork extends Component{
         if(this.state.selectValue==="1"){
           //alert("add series");
           //window.localStorage.removeItem("ptcode_id");
-        this.props.history.push('/add-series');
+        history.push('/add-series');
     }
         if(this.state.selectValue==="2"){
               //window.localStorage.removeItem("ptcode_id");
-            this.props.history.push('/add-pcd');
+            history.push('/add-pcd');
         }
         if(this.state.selectValue==="3"){
           //window.localStorage.removeItem("ptcode_id");
-        this.props.history.push('/add-mnp');
+        history.push('/add-mnp');
     }
          }
         
     render(){
        
-            const columns = [
+            /*const columns = [
               { title: "S.No",
                   
               },
@@ -72,11 +73,14 @@ class HomeNetwork extends Component{
                 title:"Delete"
               }
 
-            ]
+            ]*/
              
             
             return(
-          <div>
+          <div >
+            
+            <div className='topline'>Home Network Elements</div>
+            <Form className='formset'>
           <Form.Item 
                         label = "Network Elements"
                         
@@ -84,23 +88,24 @@ class HomeNetwork extends Component{
                             required: true}]}>
               
                     
-                <Select placeholder="Series" onChange={this.handleDropdownChange}>
-                <Option value="1">Series</Option>
+                <Select style={{width:"300px"}}
+                placeholder="--select--" onChange={this.handleDropdownChange}>
+                {/* <Option value="1">Series</Option> */}
                 <Option value="2">Point Code Details</Option>
                 <Option value="3">MNP Gateway</Option>
                
                 </Select>
               </Form.Item>
-              <Button  icon={<PlusCircleFilled/>} onClick={() => this.add()}>add
+              {/*<Button  icon={<PlusCircleFilled/>} onClick={() => this.add()}>ADD
                 </Button><br /><br/>
-                <Table
+                 <Table
              columns={columns} 
              //dataSource={this.state.pcd} 
              //id="students"
              bordered 
              //onChange={this.handleChange}  
-             />
-            
+             /> */}
+            </Form>
               </div>
 
                 
@@ -111,6 +116,4 @@ class HomeNetwork extends Component{
 
 export default HomeNetwork;
 
-
  
-
