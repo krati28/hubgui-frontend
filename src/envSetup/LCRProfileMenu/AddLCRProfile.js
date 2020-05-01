@@ -15,6 +15,7 @@ const formItemLayout = {
       sm: { span: 16 }
     }
   };
+
 class AddLCRProfile extends Component{
 
     constructor(props){
@@ -22,7 +23,7 @@ class AddLCRProfile extends Component{
         this.state ={
             lcr_policy_id:'',
             lcr_name: '',
-            lcr_type: 'Default LCR',
+            lcr_type: '',
             third_supp_retry: '',
             message: null
         }
@@ -41,169 +42,147 @@ class AddLCRProfile extends Component{
             .then((res) => {
                 let lcr_data = res.data.result;
                 this.setState({
-                lcr_policy_id: lcr_data.lcr_policy_id,
-                lcr_name:lcr_data.lcr_name,
-                lcr_type:lcr_data.lcr_type,
-                tthird_supp_retry:lcr_data.third_supp_retry,
+                    lcr_policy_id: lcr_data.lcr_policy_id,
+                    lcr_name:lcr_data.lcr_name,
+                    lcr_type:lcr_data.lcr_type,
+                    third_supp_retry:lcr_data.third_supp_retry,
                 }, () => console.log(this.state));
             
                 this.formRef.current.setFieldsValue({
                     lcr_policy_id: lcr_data.lcr_policy_id,
-                lcr_name:lcr_data.lcr_name,
-                lcr_type:lcr_data.lcr_type,
-                third_supp_retry:lcr_data.third_supp_retry,
+                    lcr_name:lcr_data.lcr_name,
+                    lcr_type:lcr_data.lcr_type,
+                    third_supp_retry:lcr_data.third_supp_retry,
                 })
             });
     }
+
     onChange = (e) =>{
         this.setState({ [e.target.name]: e.target.value },
             );
     }
 
     handleDropdownChangeLCRType =(e) =>
-      {
+    {
           this.setState({ lcr_type: e });
-        }
-
-        
-    // saveLcr = (e) => {
-    //     e.preventDefault();
-    //     let lcr_data = { lcr_name: this.state.lcr_name, lcr_type: this.state.lcr_type,
-    //          };
-    //     LcrApiService.addLcr(lcr_data)
-    //         .then(res => {
-    //             this.setState({message : 'User added successfully.'});
-    //             this.props.history.push('/environmentSetup-lcrProfile');
-    //         });
-    // }
+    }
 
     saveLcr = (e) => {
         e.preventDefault();
         if(this.state.lcr_policy_id===''){
-            let lcr_data = { lcr_policy_id:this.state.lcr_policy_id,lcr_name: this.state.lcr_name, 
-                lcr_type: this.state.lcr_type,third_supp_retry:this.state.third_supp_retry,
-                         };
-                // alert("in add pcd");
+            let lcr_data = { 
+                lcr_policy_id:this.state.lcr_policy_id,
+                lcr_name: this.state.lcr_name, 
+                lcr_type: this.state.lcr_type,
+                third_supp_retry:this.state.third_supp_retry,
+            };
         LcrApiService.addLcr(lcr_data)
             .then(res => {
-                // alert("ssss");
                 this.setState({message : 'added successfully.'});
-                //appends the /students to localhost:3000 url and hence lists out all the data
             history.push('/environmentSetup-lcrProfile');
-            });}
-            else if(this.state.lcr_policy_id !== ''){
-                let lcr_data = { lcr_policy_id:this.state.lcr_policy_id,lcr_name: this.state.lcr_name, 
-                    lcr_type: this.state.lcr_type,third_supp_retry:this.state.third_supp_retry,
-                             };
-                // alert("in editpcd");
-                LcrApiService.editLcr(lcr_data)
-                .then(res =>{
-                    // alert("hiiii")
-                    this.setState({message:'updated successfully.'});
-                history.push('/environmentSetup-lcrProfile');
-                });
-            }
+            });
+        }
+        else if(this.state.lcr_policy_id !== ''){
+            let lcr_data = { 
+                lcr_policy_id:this.state.lcr_policy_id,
+                lcr_name: this.state.lcr_name, 
+                lcr_type: this.state.lcr_type,
+                third_supp_retry:this.state.third_supp_retry,
+                };
+            LcrApiService.editLcr(lcr_data)
+            .then(res =>{
+                // alert("hiiii")
+                this.setState({message:'updated successfully.'});
+            history.push('/environmentSetup-lcrProfile');
+            });
+        }
     }
-
 
     render(){
         return(
             <div>
-                
-              <div className='topline'>Add LCR List</div>
-              <div className="abc">
-                <div className="formalign">
-                <Form name="basic" initialValues={{remember:true}}
-                ref={this.formRef} {...formItemLayout}>
-                    <Form.Item
-                    label = "Lcr Name"
-                    name = "lcr_name"
-                    labelAlign="left"
-                    rules = {[{ 
-                        required: true, 
-                        message: 'Please input your Cluster Name!',
-                        },
-                    ]}>
-                        <Input 
-                            type="text" 
-                            className="inputset"
-                            placeholder = "Enter lcr name..."
-                            name="lcr_name"
-                            labelAlign="left"
-                            value={this.state.lcr_name} 
-                            onChange={this.onChange} 
-                        />
-                    </Form.Item>
-                    <Form.Item
-                    label="LCR Type" name="lcr_type" labelAlign="left" rules = {[{required:true}]}>
-                        <Select placeholder="--select--" onChange={this.handleDropdownChangeLCRType}
-                        style={{width:"300px"}} labelAlign="left">
-                            <Option value="0">Default LCR</Option>
-                            <Option value= "1" >SC_MT</Option>
-                            <Option value="3">SPEC_LCR</Option>
-                            <Option value="4">Time based Lcr</Option>
-                            
-                            </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                     label = "Third Party"
-                     name = "third_supp_retry"
-                     labelAlign="left"
-                     rules = {[{ 
-                         
-                         message: 'Please input your third party Name!',
-                         },
-                     ]}>
-                         <Input 
-                             type="text" 
-                             className="inputset"
-                             labelAlign="left"
-                             placeholder = "Enter a number"
-                             name="third_supp_retry"
-                             value={this.state.third_party_supp} 
-                             onChange={this.onChange} 
-                         />
-
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Space>
-                    <Button type="primary" onClick={this.saveLcr} disabled={!this.state.lcr_name 
-            || !this.state.lcr_type } >Submit</Button>
-          <Button type="primary" onClick={() => this.props.history.push('/environmentSetup-lcrProfile')}
-          >Cancel</Button>
-          </Space>
-                    </Form.Item>
-                </Form>
+                <div className='topline'>Add LCR List
                 </div>
+                <div className="abc">
+                    <div className="formalign">
+                        <Form 
+                            name="basic" 
+                            initialValues={{remember:true}}
+                            ref={this.formRef} 
+                            {...formItemLayout}>
+                            <Form.Item
+                                label = "Lcr Name"
+                                name = "lcr_name"
+                                labelAlign="left"
+                                rules = {[{ 
+                                    required: true, 
+                                    message: 'Please input your Cluster Name!',
+                                    },
+                                ]}
+                            >
+                                <Input 
+                                    type="text" 
+                                    className="inputset"
+                                    placeholder = "Enter lcr name..."
+                                    name="lcr_name"
+                                    labelAlign="left"
+                                    value={this.state.lcr_name} 
+                                    onChange={this.onChange} 
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="LCR Type" 
+                                name="lcr_type" 
+                                labelAlign="left" 
+                                
+                                rules = {[{required:true, message:"Select a List Type!"}]}
+                            >
+                                <Select 
+                                    placeholder="--select--" 
+                                    name="lcr_type"
+                                    onChange={this.handleDropdownChangeLCRType}
+                                    style={{width:"300px"}} 
+                                    labelAlign="left"
+                                >
+                                    <Option value="0">Default LCR</Option>
+                                    <Option value= "1" >SC_MT</Option>
+                                    <Option value="3">SPEC_LCR</Option>
+                                    <Option value="4">Time based Lcr</Option>
+                                    
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label = "Third Party"
+                                name = "third_supp_retry"
+                                labelAlign="left"
+                            >
+                                <Input 
+                                    type="text" 
+                                    className="inputset"
+                                    labelAlign="left"
+                                    placeholder = "Enter a number"
+                                    name="third_supp_retry"
+                                    value={this.state.third_party_supp} 
+                                    onChange={this.onChange} 
+                                />
+                            </Form.Item>
+                            <Form.Item>
+                                <Space>
+                                    <Button 
+                                        type="primary" 
+                                        onClick={this.saveLcr} 
+                                        disabled={!this.state.lcr_name || !this.state.lcr_type } 
+                                    >Submit</Button>
+                                    <Button 
+                                        type="danger" 
+                                        onClick={() => this.props.history.push('/environmentSetup-lcrProfile')}
+                                    >Cancel</Button>
+                                </Space>
+                            </Form.Item>
+                        </Form>
+                    </div>
                 </div>
             </div>
-            // <div>
-            //     <form>
-            //         <fieldset>
-            //         <label for="lcrprofile_name" class="required">LCR Profile name:</label>
-            //             <input type="text" id="lcrprofile_name" name="lcr_name" 
-            //             value={this.state.lcr_name} onChange={this.onChange}/><br/><br/>
-
-            //             <label for="" class="required">LCR Type: </label>
-            //             <select id="lcr_type" name="lcr_type" onChange={this.handleDropdownChangeLCRType}>
-            //                 <option value="Default LCR" >Default LCR</option>
-            //                 <option value="SC_MT" >SC_MT</option>
-            //                 <option value="SPEC_LCR" >SPEC_LCR</option>
-            //                 <option value="Time Based LCR" >Time Based LCR</option>
-                            
-            //             </select>
-            //             <br/><br/>
-            //         <div>
-            //                     <button class="gaping" id="done"  onClick={this.saveLcr}>Done</button>
-            //                     <button id="cancel">Cancel</button>
-            //             </div>
-            //             <br/><br/><br/>
-            //             <label class="mandatory" >* Denotes Mandatory Fields</label>
-            //         </fieldset>
-            //     </form>
-            // </div>
         );
     }
 }

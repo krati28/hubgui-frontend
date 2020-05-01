@@ -134,7 +134,7 @@ class Main extends Component{
             <Menu.Item>Customer Portal Users</Menu.Item>
         </SubMenu>
   </Menu></Sider>
-  <Content style={{height:500}}>
+  <Content style={{height:570}}>
   {/* <Route path="/" component={Welcome} /> */}
 
 <Route path="/environmentSetup-homeNetwork" component={HomeNetwork}/>
@@ -160,7 +160,7 @@ class Main extends Component{
 <Route path="/add-deal" component={AddDealManagement}/>
   </Content>
       </Layout>
-      <Footer>Footer</Footer>
+      <Footer className="footer">© 2020 Mahindra Comviva Technologies Ltd</Footer>
     </Layout>
   
             </div>

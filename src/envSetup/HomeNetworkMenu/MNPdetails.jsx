@@ -112,7 +112,7 @@ this.setState({
                   <Form.Item>
             
                 
-               <Button  icon={<PlusCircleFilled/>} onClick={() => this.addMNP()}>ADD
+               <Button type="primary" onClick={() => this.addMNP()}>Add
                 </Button></Form.Item>
                 <Form.Item>
                <Table

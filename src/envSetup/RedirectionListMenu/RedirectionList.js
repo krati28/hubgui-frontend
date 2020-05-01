@@ -49,7 +49,7 @@ class RedirectionList extends Component{
     }
 
     addUser() {
-        window.localStorage.removeItem("userId");
+        window.localStorage.removeItem("id");
         history.push('/add-redirectionList');
     }
     
@@ -122,7 +122,7 @@ class RedirectionList extends Component{
               <div className='topline'>Redirection List</div>
             <Form className='formset' >
                 <Form.Item>
-                <Button icon={<PlusCircleFilled/>} onClick={() => this.addUser()}> Add user</Button></Form.Item>
+                <Button type="primary" onClick={() => this.addUser()}> Add user</Button></Form.Item>
                 <Form.Item>
                     <Table 
                     columns={columns}

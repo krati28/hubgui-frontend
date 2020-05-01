@@ -80,6 +80,7 @@ class HomeNetwork extends Component{
           <div >
             
             <div className='topline'>Home Network Elements</div>
+            <div className="abc">
             <Form className='formset'>
           <Form.Item 
                         label = "Network Elements"
@@ -106,6 +107,7 @@ class HomeNetwork extends Component{
              //onChange={this.handleChange}  
              /> */}
             </Form>
+              </div>
               </div>
 
                 

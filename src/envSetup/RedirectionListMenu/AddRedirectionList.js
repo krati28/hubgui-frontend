@@ -6,6 +6,18 @@ const {Option} = Select;
 const OPTIONS_ESME = ['Red_Account', 'Red_Account1', 'Red_AccountHTTP', 'Red_acc_temp'];
 const OPTIONS_POINTCODE = ['DCP-2000', 'Chethan Test-1788'];
 const {Title} = Typography;
+
+const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
+    }
+  };
+
 class AddRedirectionList extends Component{
 
     constructor(props){
@@ -102,94 +114,118 @@ class AddRedirectionList extends Component{
         return(
             <div>
                 
-              <div className='topline'> Add Redirection List</div>
-                <Form
-                    name="basic" ref={this.formRef}
-                    initialValues={{ remember: true }}
-                    className="formset"
-                >
-                    <Form.Item 
-                        label = "List Name" name = "listname"
-                        rules = {[{ required: true, message: 'Please input your List Name!'}]}
-                      >
-                        <Input 
-                        className='inputset'
-                            type="text" 
-                            placeholder = "Enter list name..."
-                            name="listname"
-                            value={this.state.listname} 
-                            onChange={this.onChange} 
-                        />
-                    </Form.Item>
-                
-                    <Form.Item
-                        label="List Type" name="listtype"
-                        rules = {[{required:true}]}
+                <div className='topline'> 
+                    Add Redirection List
+                </div>
+
+                <div className="abc">
+                    <div className="formalign">
+                        <Form
+                            name="basic" 
+                            ref={this.formRef}
+                            initialValues={{ remember: true }}
+                            className="formset"
+                            {...formItemLayout}
                         >
-                        <Select style={{width:"300px"}}
-                         placeholder="Click to see List Types" onChange={this.handleDropdownChangeType}>
-                            <Option value="esme">ESME</Option>
-                            <Option value="point_code">Point Code</Option>
-                        </Select>
-
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Load Distribution Type" name="loadDistributionType"
-                        rules = {[{required:true}]}
-                        >
-                        <Select style={{width:"300px"}} 
-                        placeholder="Click to see Load Distribution Types" onChange={this.handleDropdownChangeLoad}>
-                            <Option value="round_robin">Round Robin</Option>
-                            <Option value="priority">Priority</Option>
-                            <Option value="percentage">Percentage</Option>
-                        </Select>
-                    </Form.Item>
-
-                    {this.state.showPercentage &&
-                        <Form.Item
-                        label="Sample Value"
-                        name="sampleValue"
-                        rules = {[{required:true}]}
-                        >
-                            <InputNumber></InputNumber>
-                        </Form.Item>
-                    }
-
-                    {this.state.esmeAccount &&
-                        <Form.Item
-                            label="Select Accounts"
-                            name="selectAccounts"
-                            rules = {[{required: true}]}
+                            <Form.Item 
+                                label = "List Name" 
+                                name = "listname"
+                                labelAlign="left"
+                                rules = {[{ required: true, message: 'Please input your List Name!'}]}
                             >
-                            <Select
-                                mode="multiple"
-                                placeholder="Multiple value can be selected"
-                                value={selectedItems}
-                                onChange={this.handleChange}
-                                style={{ width: "300px" }}
-                            >
-                                {filteredOptions.map(item => (
-                                <Select.Option key={item} value={item}>
-                                    {item}
-                                </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    }
+                                <Input 
+                                    className='inputset'
+                                    type="text" 
+                                    labelAlign="left"
+                                    placeholder = "Enter list name..."
+                                    name="listname"
+                                    value={this.state.listname} 
+                                    onChange={this.onChange} 
+                                />
+                            </Form.Item>
+                        
+                            <Form.Item
+                                label="List Type" 
+                                name="listtype"
+                                labelAlign="left"
+                                rules = {[{required:true, message:"Select a List Type!"}]}
+                                >
+                                <Select 
+                                    style={{width:"300px"}}
+                                    placeholder="Click to see List Types" 
+                                    onChange={this.handleDropdownChangeType}
+                                    labelAlign="left"
+                                    >
+                                    <Option value="esme">ESME</Option>
+                                    <Option value="point_code">Point Code</Option>
+                                </Select>
 
-                    <Form.Item > 
-                        <Space>
-                        <Button type="primary" onClick={this.saveRedirectionList} disabled={!this.state.listname || !this.state.listtype || !this.state.loadDistributionType} >Submit</Button>
-                        <Button type="danger" onClick={() => history.push('/environmentSetup-redirectionList')}>Cancel</Button>
-                        </Space>
-                    </Form.Item>
+                            </Form.Item>
 
-                </Form>
+                            <Form.Item
+                                label="Load Distribution Type" 
+                                name="loadDistributionType"
+                                rules = {[{required:true, message:"Select Load Distribution Type"}]}
+                                labelAlign="left"
+                                >
+                                <Select 
+                                    style={{width:"300px"}} 
+                                    placeholder="Click to see Load Distribution Types" 
+                                    onChange={this.handleDropdownChangeLoad}>
+                                    <Option value="round_robin">Round Robin</Option>
+                                    <Option value="priority">Priority</Option>
+                                    <Option value="percentage">Percentage</Option>
+                                </Select>
+                            </Form.Item>
+
+                            {this.state.showPercentage &&
+                                <Form.Item
+                                label="Sample Value"
+                                name="sampleValue"
+                                labelAlign="left"
+                                rules = {[{required:true, message:"Sample value is requiured"}]}
+                                >
+                                    <InputNumber labelAlign="left"/>
+                                </Form.Item>
+                            }
+
+                            {this.state.esmeAccount &&
+                                <Form.Item
+                                    label="Select Accounts"
+                                    name="selectAccounts"
+                                    labelAlign="left"
+                                    rules = {[{required: true, message:"Select atleast one Account"}]}
+                                    >
+                                    <Select
+                                        mode="multiple"
+                                        placeholder="Multiple value can be selected"
+                                        value={selectedItems}
+                                        onChange={this.handleChange}
+                                        style={{ width: "300px" }}
+                                        labelAlign="left"
+                                    >
+                                        {filteredOptions.map(item => (
+                                        <Select.Option key={item} value={item}>
+                                            {item}
+                                        </Select.Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                            }
+
+                            <Form.Item > 
+                                <Space>
+                                    <Button type="primary" onClick={this.saveRedirectionList} disabled={!this.state.listname || !this.state.listtype || !this.state.loadDistributionType} >Submit</Button>
+                                    <Button type="danger" onClick={() => history.push('/environmentSetup-redirectionList')}>Cancel</Button>
+                                </Space>
+                            </Form.Item>
+
+                        </Form>
+                    </div>
+                </div>
             </div>
         );
     }
 }
 
 export default AddRedirectionList;
-

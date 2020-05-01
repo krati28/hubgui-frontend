@@ -4,7 +4,16 @@ import history from "../../History";
 import {Form, Input, Button, Select, Typography, Table, Space} from 'antd';
 import Column from 'antd/lib/table/Column';
 import '../../styling/Styletable.css';
-
+const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 }
+    }
+  };
 const {Option} = Select;
 const {Title} = Typography;
 class AddMNPGateway extends Component{
@@ -16,18 +25,18 @@ class AddMNPGateway extends Component{
             showtype:false,
             shownode:false,
             mnp_id:'',
-           mnp_type:'',
-           gateway_name:'',
-           config:{},
-           cache_name:'',
-           max_trans:'',
+            mnp_type:'',
+            gateway_name:'',
+            config:{},
+            cache_name:'',
+            max_trans:'',
             lbmode:'',
-           gateway_type:'',
-           zone:'',
-           ttl_override:'',
-        
+            gateway_type:'',
+            zone:'',
+            ttl_override:'',
+            list:[],
            //addnode:'',
-    message: null
+            message: null
         }
         this.saveMNP = this.saveMNP.bind(this);
         this.handleDropdownChangeMNPGateway = this.handleDropdownChangeMNPGateway .bind(this);
@@ -109,27 +118,27 @@ class AddMNPGateway extends Component{
             this.setState({
                 showtype:true,
                 showzone:false,
-               showOption:false
-              }) 
+                showOption:false
+            }) 
         }
         else if(e==="Enum"){
         this.setState({
-            showzone : true,
-            showOption: false,
-            showtype:false
-          }) 
+                showzone : true,
+                showOption: false,
+                showtype:false
+            }) 
         }
         else if(e ==="Cache"){
             this.setState({
                 showOption : true,
                 showzone:false,
                 showtype:false
-              }) 
+            }) 
         }
     }
       handleLBMode =(e1) =>
     {
-          this.setState({ lbmode: e1 });
+        this.setState({ lbmode: e1 });
     } 
 
         handleGatewayType =(ee) =>
@@ -178,50 +187,71 @@ class AddMNPGateway extends Component{
             <div >
                 
               <div className='topline'>Add MNP Gateway</div>
-                <Form name="basic" ref={this.formRef}
+              <div className="abc">
+                <div className="formalign">
+                <Form name="basic" ref={this.formRef} 
                 initialValues={{ remember: true }}
-                className="formset">
+                className="formset" {...formItemLayout}>
                 <Form.Item 
-                        label="MNP Gateway" name="mnp_type" rules = {[{required:true}]}>
+                label = "MNP Gateway" 
+                name = "mnp_type" 
+                labelAlign="left"
+                rules = {[{required:true}]} >
                 <Select placeholder="--select--" onChange={this.handleDropdownChangeMNPGateway}
-                style={{width:"300px"}}>
-                <Option value="Redis">Redis</Option>
-                <Option value="Enum">Enum</Option>
-                <Option value="Cache">Cache</Option>
+                labelAlign="left" style={{width:"300px"}}>
+                    <Option value="Redis">Redis</Option>
+                    <Option value="Enum">Enum</Option>
+                    <Option value="Cache">Cache</Option>
                 </Select>
                 </Form.Item>
                 <Form.Item 
-                        label = "Gateway Name"
-                        name = "gateway_name"
-                        rules = {[{ required: true,message: 'Please enter gateway name',},]}>
-            
-                <Input className="inputset"
-                type="text" name="gateway_name" value={this.state.gateway_name} onChange={this.onChange} />
+                label = "Gateway Name"
+                name = "gateway_name" 
+                labelAlign="left"
+                rules = {[{ required: true,message: 'Please enter gateway name',},]}>
+                    <Input 
+                        type="text" 
+                        className="inputset"
+                        name="gateway_name" 
+                        labelAlign="left" 
+                        value={this.state.gateway_name} 
+                        onChange={this.onChange} 
+                    />
                 </Form.Item>
                 {this.state.showzone&&
                 <Form.Item 
                 label = "Zone"
-                name = "zone"
-                    >
-            
-                        <Input className="inputset"
-                         type="text" name="zone" value={this.state.zone} onChange={this.onChange} />
+                name = "zone" 
+                labelAlign="left">
+                    <Input 
+                        type="text"
+                        className="inputset"
+                        name="zone" 
+                        labelAlign="left" 
+                        value={this.state.zone} 
+                        onChange={this.onChange} 
+                    />
                 </Form.Item>
                 }
                 <Form.Item 
-                label = "Max pending Transactions"
-                name = "max_trans"
-                   >
-            
-                        <Input className="inputset" 
-                        type="text" name="max_trans" value={this.state.max_trans} onChange={this.onChange} />
+                label = "Max Pending Transactions"
+                name = "max_trans" 
+                labelAlign="left">
+                    <Input 
+                        type="text" 
+                        className="inputset" 
+                        name="max_trans" 
+                        labelAlign="left" 
+                        value={this.state.max_trans} 
+                        onChange={this.onChange} 
+                    />
                 </Form.Item>
                 
-                <Form.Item label="LB MODE" name="lbmode" >
+                <Form.Item label = "LB MODE" name="lbmode"  labelAlign="left">
                 <Select placeholder="--select--" onChange={this.handleLBMode}
-                style={{width:"300px"}}>
-                <Option value="Active-StandBy">Active-StandBy</Option>
-                <Option value="Active-Active">Active-Active</Option>
+                labelAlign="left" style={{width:"300px"}}>
+                    <Option value="Active-StandBy">Active-StandBy</Option>
+                    <Option value="Active-Active">Active-Active</Option>
                 
                 </Select>
                 </Form.Item>
@@ -236,9 +266,9 @@ class AddMNPGateway extends Component{
                 </Form.Item>
                 }        */}
                 {this.state.showzone&&
-                <Form.Item label="Select Cache" name="cache_name"  >
+                <Form.Item label="Select Cache" name="cache_name" labelAlign="left" >
                 <Select placeholder="--select--" onChange={this.handlecache}
-                style={{width:"300px"}}>
+                labelAlign="left" style={{width:"300px"}}>
                 {this.state.list.map((test) => <Option value={test.gateway_name}> {test.gateway_name} </Option> )}
                 
                 </Select>
@@ -246,30 +276,32 @@ class AddMNPGateway extends Component{
                 }
                 {this.state.showOption&&
                 <Form.Item 
-                label = "TTL Ovverride"
-                name = "ttl_override"
-                    >
-            
-                        <Input className="inputset"
-                        type="text" name="ttl_override" defaultValue="86400" onChange={this.onChange} />
+                label="TTL Ovverride"
+                name = "ttl_override" 
+                labelAlign="left">
+                    <Input 
+                        type="text"
+                        className="inputset"
+                        name="ttl_override" 
+                        labelAlign="left" 
+                        defaultValue="86400" 
+                        onChange={this.onChange} 
+                    />
                 </Form.Item>
                 }
-                
-
-                 <Form.Item > 
-                     <Space>
-          <Button type="primary" onClick={this.saveMNP} disabled={!this.state.mnp_type || 
-            !this.state.gateway_name} >Submit</Button>
-          <Button type="primary" onClick={() => this.props.history.push('/listmnp')}>Cancel</Button>
-          </Space>
+                <Form.Item > 
+                <Space>
+                <Button type="primary" onClick={this.saveMNP} disabled={!this.state.mnp_type || 
+                    !this.state.gateway_name} >Submit</Button>
+                <Button type="primary" onClick={() => this.props.history.push('/listmnp')}>Cancel</Button>
+                </Space>
                 </Form.Item>
 
                 </Form>
             </div>
-
+            </div></div>
         );
     }
 }
 
 export default  AddMNPGateway;
-

@@ -27,6 +27,7 @@
 /*header data settings*/
 .headerdata{
   color: white;
+  font-size: 35px;
 }
 
 /*sider data setting*/
@@ -70,5 +71,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: grey;
+  color: white;
+  text-align: center;
+  padding-bottom: 0.3em;
+  padding-top: 0.3em;
 }
 
