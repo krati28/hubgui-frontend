@@ -480,7 +480,7 @@ class AddCustomerProfile extends Component{
                     cancelText="No"
                 >
                 <Button 
-                    type="primary" 
+                    // type="primary" 
                     //onClick={this.onReset} 
                 >Clear</Button> 
                 </Popconfirm>

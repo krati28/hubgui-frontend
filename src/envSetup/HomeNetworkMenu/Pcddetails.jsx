@@ -205,8 +205,10 @@ mapssn=(ssn)=>{
               <div className='topline'>Point Code Details</div>
                 <Form className="formset">
                     <Form.Item>
+                        <center>
                     <Button  type="primary" onClick={() => this.addPcd()}>Add
                         </Button>
+                        </center>
                         </Form.Item>
                         <Form.Item >
                     <Table

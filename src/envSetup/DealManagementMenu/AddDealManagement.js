@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, DatePicker, Select, Button, InputNumber, Space,  Card} from 'antd';
+import { Form, Input, DatePicker, Select, Button, InputNumber, Space, Popconfirm} from 'antd';
 import history from "../../History";
 import '../../styling/Styletable.css';
 import DealService from '../../service/DealService';
@@ -209,6 +209,10 @@ class AddDealManagement extends Component{
         }
     }
 
+    onReset = () => {
+        this.formRef.current.resetFields();
+    }
+
     saveDealMgmt = (e) => {
         e.preventDefault();
         let deal_data = {id: this.state.id, name: this.state.name, validity_prd: this.state.validity_prd,
@@ -234,7 +238,6 @@ class AddDealManagement extends Component{
                 </div>
                 
                 <div className="abc">
-                    <Card style={{ boxShadow: '3px 1px 10px #888888', marginTop:"15px" }}>
                     <div className="formalign">
                         <Form
                             name="basic" 
@@ -442,25 +445,49 @@ class AddDealManagement extends Component{
                                 {/* Buttons */}
                                 <div className="buttonset">
                             <Form.Item>  
-                                <center>
+                                
                                 <Space>
-                                    <Button 
-                                        type="primary" 
-                                        onClick={this.saveDealMgmt}>
-                                        Save
-                                    </Button>
-                                    <Button 
-                                        type="danger" 
-                                        onClick={() => history.push('/environmentSetup-dealManagement')}>
-                                        Cancel
-                                    </Button>
+
+                                    <Popconfirm
+                                        title="Do you want to Add the record"
+                                        onConfirm={this.saveDealMgmt}
+                                        okText="Yes"
+                                        cancelText="No"
+                                        >
+
+                                        <Button  type="primary" >
+                                            Save
+                                        </Button>
+                                    </Popconfirm>
+
+                                    <Popconfirm
+                                       title="Do you want to reset the fields"
+                                       onConfirm={this.onReset}
+                                       okText="Yes"
+                                       cancelText="No">
+
+                                        <Button type="default">
+                                            Clear
+                                        </Button>
+                                    </Popconfirm>
+
+                                    <Popconfirm 
+                                        title="Do you want to cancel"
+                                        onConfirm={()=>this.props.history.push('/environmentSetup-dealManagement')}
+                                        okText="Yes"
+                                        cancelText="No"
+                                        >
+                                        <Button type="danger" >
+                                            Cancel
+                                        </Button>
+                                    </Popconfirm>
+
                                 </Space>
-                                </center>
+                               
                             </Form.Item>
                             </div>
                         </Form>
                     </div>
-                        </Card>
                 </div>
                
             </div>

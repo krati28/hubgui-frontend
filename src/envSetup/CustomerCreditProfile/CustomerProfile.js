@@ -15,8 +15,10 @@ class CustomerProfile extends Component{
             </div>
             <Form className="formset">
               <Form.Item>
+                  <center>
                 <Button type="primary" onClick={() => this.addCustomer()}>Add
                 </Button>
+                </center>
               </Form.Item>
               </Form>
             </div>

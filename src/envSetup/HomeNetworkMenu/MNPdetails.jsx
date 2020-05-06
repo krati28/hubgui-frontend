@@ -189,9 +189,11 @@ getColumnSearchProps = dataIndex => ({
               <Form className="formset">
                   <Form.Item>
             
-                
+                <center>
                <Button type="primary" onClick={() => this.addMNP()}>Add
-                </Button></Form.Item>
+                </Button>
+                </center>
+                </Form.Item>
                 <Form.Item>
                <Table
              columns={columns} 

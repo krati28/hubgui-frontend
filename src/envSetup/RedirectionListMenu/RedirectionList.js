@@ -129,7 +129,9 @@ class RedirectionList extends Component{
               <div className='topline'>Redirection List</div>
                 <Form className='formset' >
                     <Form.Item>
-                        <Button type="primary" onClick={()=>this.addUser()}> Add user</Button>
+                        <center>
+                            <Button type="primary" onClick={()=>this.addUser()}> Add </Button>
+                        </center>
                     </Form.Item>
                 
                     <Form.Item>

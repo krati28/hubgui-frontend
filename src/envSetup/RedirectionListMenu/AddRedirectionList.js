@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Form, Input, Button, Select, Typography, InputNumber, Space} from 'antd';
+import {Form, Input, Button, Select, Typography, InputNumber, Space, Popconfirm} from 'antd';
 import RedirectionListService from "../../service/RedirectionListService";
 import history from "../../History"
 const {Option} = Select;
@@ -219,26 +219,42 @@ class AddRedirectionList extends Component{
                             <div className="buttonset">
                             <Form.Item > 
                                 <Space>
-                                    <Button 
-                                        type="primary" 
-                                        onClick={this.saveRedirectionList} 
-                                        disabled={!this.state.listname || !this.state.listtype || !this.state.loadDistributionType}
-                                        >
-                                        Save
-                                    </Button>
 
-                                    <Button 
-                                        type="danger" 
-                                        onClick={() => history.push('/environmentSetup-redirectionList')}>
-                                        Cancel
-                                    </Button>
-
-                                    <Button
-                                        type="primary"
-                                        onClick={this.onReset}
+                                    <Popconfirm
+                                        title="Do you want to Add the record"
+                                        onConfirm={this.saveRedirectionList}
+                                        okText="Yes"
+                                        cancelText="No"
                                         >
-                                            Clear
+
+                                        <Button 
+                                            type="primary" 
+                                            disabled={!this.state.listname || !this.state.listtype || !this.state.loadDistributionType}
+                                            >
+                                            Save
                                         </Button>
+                                    </Popconfirm>
+
+                                    <Popconfirm
+                                        title="Do you want to reset the fields"
+                                        onConfirm={this.onReset}
+                                        okText="Yes"
+                                        cancelText="No">
+
+                                        <Button>Clear</Button>
+                                    </Popconfirm>
+                                    
+                                    <Popconfirm
+                                        title="Do you want to cancel"
+                                        onConfirm={()=>this.props.history.push('/environmentSetup-redirectionList')}
+                                        okText="Yes"
+                                        cancelText="No"
+                                        >
+                                        <Button type="danger" >
+                                            Cancel
+                                        </Button>
+                                    </Popconfirm>
+                                    
                                 </Space>
                             </Form.Item>
                             </div>

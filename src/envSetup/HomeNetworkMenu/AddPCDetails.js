@@ -329,7 +329,7 @@ class AddPCDetails extends Component{
                         cancelText="No"
                     >
                     <Button 
-                        type="primary" 
+                        // type="default" 
                         //onClick={this.onReset} 
                         >Clear</Button>
                     </Popconfirm>

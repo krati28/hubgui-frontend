@@ -393,7 +393,9 @@ class AddLCRProfile extends Component{
                                         okText="Yes"
                                         cancelText="No"
                                     >
-                                    <Button type="primary">
+                                    <Button 
+                                    // type="primary"
+                                    >
                                         Clear                                        
                                     </Button>
                                     </Popconfirm>
