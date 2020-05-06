@@ -70,19 +70,19 @@ class Main extends Component{
                             </span>
                           }
                         >
-                          <Menu.Item><NavLink to="/environmentSetup-homeNetwork">Home Network</NavLink></Menu.Item>
+                          <Menu.Item><NavLink to="/environmentSetup-homeNetwork" activeStyle={{color:'red'}}>Home Network</NavLink></Menu.Item>
                           <Menu.Item>Retry Policy</Menu.Item>
                           <Menu.Item>Redirection Accounts</Menu.Item>
-                          <Menu.Item > <NavLink  to="/environmentSetup-redirectionList"> Redirection List</NavLink></Menu.Item>
+                          <Menu.Item > <NavLink  to="/environmentSetup-redirectionList" activeStyle={{color:'red'}}> Redirection List</NavLink></Menu.Item>
                           <Menu.Item>Operator Profile</Menu.Item>
-                          <Menu.Item> <NavLink  to="/environmentSetup-pathDetails">Path Details</NavLink></Menu.Item>
-                          <Menu.Item><NavLink  to="/environmentSetup-operatorCluster">Operator Cluster</NavLink></Menu.Item>
-                          <Menu.Item><NavLink to="/environmentSetup-lcrProfile">LCR Profile</NavLink></Menu.Item>
+                          <Menu.Item> <NavLink  to="/environmentSetup-pathDetails" activeStyle={{color:'red'}}>Path Details</NavLink></Menu.Item>
+                          <Menu.Item><NavLink  to="/environmentSetup-operatorCluster" activeStyle={{color:'red'}}>Operator Cluster</NavLink></Menu.Item>
+                          <Menu.Item><NavLink to="/environmentSetup-lcrProfile" activeStyle={{color:'red'}}>LCR Profile</NavLink></Menu.Item>
                           <Menu.Item>SC AT LCR Profile</Menu.Item>
                           <Menu.Item>Customer/Supplier</Menu.Item>
                           <Menu.Item>HTTP Templates</Menu.Item>
                           <Menu.Item>Customer/Supplier Group</Menu.Item>
-                          <Menu.Item><NavLink to="/environmentSetup-dealManagement">Deal Management</NavLink></Menu.Item>
+                          <Menu.Item><NavLink to="/environmentSetup-dealManagement" activeStyle={{color:'red'}}>Deal Management</NavLink></Menu.Item>
                           <Menu.Item>Channel Partners</Menu.Item>
                           <Menu.Item><NavLink to="/environmentSetup-customerprofile" 
                           activeStyle={{ color: 'red'}}>Customer Credit Profile</NavLink> </Menu.Item>
