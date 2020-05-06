@@ -3,6 +3,7 @@ import {Menu} from "antd";
 import {Route, NavLink, Router} from "react-router-dom";
 
 import history from './History';
+import Comviva_logo from "./images/Comviva_logo.jpg"
 
 import HomeNetwork from './envSetup/HomeNetworkMenu/HomeNetwork';
 import  AddPCDetails from "./envSetup/HomeNetworkMenu/AddPCDetails"
@@ -41,6 +42,7 @@ class Main extends Component{
                 <Header>
                   <div className='headerdata'>
                     <b>SMSHUB</b>
+                    <img src={Comviva_logo} style={{float:"right"}} />
                   </div>
                 </Header>
                 

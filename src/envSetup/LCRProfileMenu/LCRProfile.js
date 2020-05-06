@@ -172,10 +172,10 @@ class LCRProfile extends Component{
             </div>
             <Form className="formset">
               <Form.Item>
-                <center>
+                  <div className="highlight">
                 <Button type="primary" onClick={() => this.addLcr()}>Add
                 </Button>
-                </center>
+                </div>
               </Form.Item>
 
               {/* <Form.Item

@@ -223,8 +223,10 @@ class OperatorCluster extends Component{
                 <div className='topline'>Operator List</div>
                 <Form className='formset' >
                     <Form.Item>
+                        <div className="highlight">
                         <Button type="primary" onClick={() => this.addUser()}>Add
                         </Button>
+                        </div>
                     </Form.Item>
 
                 {/* <Form.Item 

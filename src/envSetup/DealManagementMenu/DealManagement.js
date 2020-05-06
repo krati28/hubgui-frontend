@@ -180,11 +180,11 @@ class DealManagement extends Component{
                 
                 <Form className='formset' >
                     <Form.Item>
-                        <center>
+                  <div className="highlight">
                             <Button type="primary" onClick={() => this.addDeal()}> 
                                 Add 
                             </Button>
-                        </center>
+                            </div>
                     </Form.Item>
                     
                     <Form.Item>
