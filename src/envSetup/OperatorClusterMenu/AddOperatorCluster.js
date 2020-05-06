@@ -216,7 +216,7 @@ class AddOperatorCluster extends Component{
                                         // onClick={this.saveUser} 
                                         disabled={!this.state.cluster_name  || 
                                         !this.state.cluster_type || !this.state.operator_ids}
-                                    >Submit</Button>
+                                    >Save</Button>
                                     </Popconfirm>
                                     <Popconfirm
                                         title="do you want to reset the data?"
@@ -224,7 +224,7 @@ class AddOperatorCluster extends Component{
                                         okText="Yes"
                                         cancelText="No"
                                     >
-                                    <Button type="primary">
+                                    <Button>
                                         Clear                                        
                                     </Button>
                                     </Popconfirm>
