@@ -440,13 +440,14 @@ class AddDealManagement extends Component{
                             </Form.Item>
                             
                                 {/* Buttons */}
+                                <div className="buttonset">
                             <Form.Item>  
                                 <center>
                                 <Space>
                                     <Button 
                                         type="primary" 
                                         onClick={this.saveDealMgmt}>
-                                        Add
+                                        Save
                                     </Button>
                                     <Button 
                                         type="danger" 
@@ -456,6 +457,7 @@ class AddDealManagement extends Component{
                                 </Space>
                                 </center>
                             </Form.Item>
+                            </div>
                         </Form>
                     </div>
                         </Card>

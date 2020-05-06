@@ -17,7 +17,8 @@ import LCRProfile from "./envSetup/LCRProfileMenu/LCRProfile";
 import AddLCRProfile from "./envSetup/LCRProfileMenu/AddLCRProfile";
 import DealManagement from "./envSetup/DealManagementMenu/DealManagement";
 import AddDealManagement from "./envSetup/DealManagementMenu/AddDealManagement";
-
+import CustomerProfile from './envSetup/CustomerCreditProfile/CustomerProfile';
+import AddCustomerProfile from './envSetup/CustomerCreditProfile/AddCustomerProfile';
 import PathDetails from "./envSetup/PathDetailsMenu/PathDetails";
 import AddPathDetails from "./envSetup/PathDetailsMenu/AddPathDetails";
 // import Welcome from "./LoginMenu/Welcome";
@@ -72,10 +73,10 @@ class Main extends Component{
                           <Menu.Item><NavLink to="/environmentSetup-homeNetwork">Home Network</NavLink></Menu.Item>
                           <Menu.Item>Retry Policy</Menu.Item>
                           <Menu.Item>Redirection Accounts</Menu.Item>
-                          <Menu.Item > <NavLink  to="/environmentSetup-redirectionList"></NavLink> Redirection List</Menu.Item>
+                          <Menu.Item > <NavLink  to="/environmentSetup-redirectionList"> Redirection List</NavLink></Menu.Item>
                           <Menu.Item>Operator Profile</Menu.Item>
-                          <Menu.Item> <NavLink  to="/environmentSetup-pathDetails">Path Details</NavLink>Path Details</Menu.Item>
-                          <Menu.Item><NavLink  to="/environmentSetup-operatorCluster">Operator Cluster</NavLink>Operator Cluster</Menu.Item>
+                          <Menu.Item> <NavLink  to="/environmentSetup-pathDetails">Path Details</NavLink></Menu.Item>
+                          <Menu.Item><NavLink  to="/environmentSetup-operatorCluster">Operator Cluster</NavLink></Menu.Item>
                           <Menu.Item><NavLink to="/environmentSetup-lcrProfile">LCR Profile</NavLink></Menu.Item>
                           <Menu.Item>SC AT LCR Profile</Menu.Item>
                           <Menu.Item>Customer/Supplier</Menu.Item>
@@ -83,8 +84,9 @@ class Main extends Component{
                           <Menu.Item>Customer/Supplier Group</Menu.Item>
                           <Menu.Item><NavLink to="/environmentSetup-dealManagement">Deal Management</NavLink></Menu.Item>
                           <Menu.Item>Channel Partners</Menu.Item>
-                          <Menu.Item>Customer Credit Profile</Menu.Item>
-                          <Menu.Item>Credit Transactions</Menu.Item>
+                          <Menu.Item><NavLink to="/environmentSetup-customerprofile" 
+                          activeStyle={{ color: 'red'}}>Customer Credit Profile</NavLink> </Menu.Item>
+<Menu.Item>Credit Transactions</Menu.Item>
                         </SubMenu>
                         
                         <SubMenu
@@ -97,7 +99,7 @@ class Main extends Component{
                         >
                           <Menu.Item>ESME Accounts</Menu.Item>
                           <Menu.Item>Ports</Menu.Item>
-                          <Menu.Item></Menu.Item>
+                          
                         </SubMenu>
 
                         <SubMenu title={
@@ -166,6 +168,10 @@ class Main extends Component{
 
                     <Route path="/environmentSetup-dealmanagement" component={DealManagement}/>
                     <Route path="/add-deal" component={AddDealManagement}/>
+                    
+                    <Route path="/environmentSetup-customerprofile" component={CustomerProfile}/>
+                    <Route path="/add-customer" component={AddCustomerProfile}/>
+
                   </Content>
                 
                 </Layout>

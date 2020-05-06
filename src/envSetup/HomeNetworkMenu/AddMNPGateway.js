@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import MNPService from "../../service/MNPService"
 import history from "../../History";
-import {Form, Input, Button, Select, Typography, Table, Space} from 'antd';
+import {Form, Input, Button, Select, Typography, Table, Space, Popconfirm} from 'antd';
 import Column from 'antd/lib/table/Column';
 import '../../styling/Styletable.css';
+import { SlidersTwoTone } from '@ant-design/icons';
 const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -36,6 +37,8 @@ class AddMNPGateway extends Component{
             ttl_override:'',
             list:[],
            //addnode:'',
+           button_submit:true,
+           button_update:false,
             message: null
         }
         this.saveMNP = this.saveMNP.bind(this);
@@ -45,7 +48,8 @@ class AddMNPGateway extends Component{
         this.handlecache=this.handlecache.bind(this);
         this.formRef = React.createRef();
         this.loadmnp=this.loadmnp.bind(this);
-        //this.handledynamicdropdown=this.handledynamicdropdown.bind(this);
+        this.Createrow=this.Createrow.bind(this);
+        this.Deleterow=this.Deleterow.bind(this);
     }
 
     componentDidMount() {
@@ -68,7 +72,7 @@ class AddMNPGateway extends Component{
              });
     }
     loadmnp() {
-        
+        this.setState({button_submit:false,button_update:true})
         MNPService.fetchMNPById(window.localStorage.getItem("mnp_id"))
         
             .then((res) => {
@@ -102,7 +106,10 @@ class AddMNPGateway extends Component{
             });
             
     }
-
+    
+    onReset = () => {
+        this.formRef.current.resetFields();
+    };
     handlecache=(e)=>{
         this.setState({cache_name:e})
     }
@@ -110,6 +117,22 @@ class AddMNPGateway extends Component{
         this.setState({ [e.target.name]: e.target.value });
         this.setState({config:{[e.target.name]: e.target.value}});
         
+    }
+    enablenode =()=>{
+        // alert("display tabel")
+        this.setState({shownode:true})
+    }
+    Createrow=()=>{
+        alert("in cre row");
+        var table = document.getElementById("node_table");
+        var rows = table.getElementsByTagName("tr");
+        var r=parseInt(rows)+1;
+        table.insertRow(parseInt(r));
+    }
+    Deleterow=()=>{
+        var table = document.getElementById("node_table");
+        var rows = table.getElementsByTagName("tr");
+        table.deleteRow(parseInt(rows)-1);
     }
     handleDropdownChangeMNPGateway  =(e) =>
     {
@@ -156,7 +179,7 @@ class AddMNPGateway extends Component{
                 "ttl_override":this.state.ttl_override || 86400}),cache_name:this.state.cache_name || "NULL"
             }
                
-        
+            
         MNPService.addMNP(mnp)
             .then(res => {
                 this.setState({message : 'added successfully.'});
@@ -172,7 +195,7 @@ class AddMNPGateway extends Component{
                 "ttl_override":this.state.ttl_override}),cache_name:this.state.cache_name
             }
                
-        
+           
         MNPService.editMNP(mnp)
             .then(res => {
                 this.setState({message : 'edited successfully.'});
@@ -289,19 +312,93 @@ class AddMNPGateway extends Component{
                     />
                 </Form.Item>
                 }
+                <Form.Item 
+                label="Add Node"
+                name = "node" 
+                labelAlign="left">
+                <Button type="default" onClick={this.enablenode}>Add Node</Button>
+                </Form.Item>
+                {this.state.shownode&&
+                    <Form.Item>
+                    <table id="node_table">
+                        <tr>
+                        <th>Host</th>
+                        <th>Port</th>
+                        <th>No. of Connections</th>
+                        <th>Fail Threshold</th>
+                        <th>Retries</th>
+                        <th>Connection Type</th>
+                        </tr>
+                        <tr>
+                        <td><Input type="text" name="host" value={this.state.host} onChange={this.onChange}/></td>
+                        <td><Input type="text" name="port" value={this.state.port} onChange={this.onChange}/></td>
+                        <td><Input type="text" name="conn" value={this.state.conn} onChange={this.onChange}/></td>
+                        <td><Input type="text" name="fail_threshold" value={this.state.fail_threshold} onChange={this.onChange}/></td>
+                        <td><Input type="text" name="retries" value={this.state.fail_retries} onChange={this.onChange}/></td>
+                        <td><Select placeholder="--select--" >
+                        <Option value="TCP">TCP</Option>
+                        <Option value="UDP">UDP</Option>
+                            </Select> </td>
+                        <td>
+                        <Form.Item>
+                        <Button type="default" onclick={this.Createrow}>Create row</Button>
+                        <Button type="default" onclick={this.Deleterow}>Delete row</Button>
+                        </Form.Item>
+                        </td>
+                        </tr>
+                    </table>
+                    </Form.Item>
+                    
+                }
+               
+               <div className="buttonset">   
                 <Form.Item > 
                 <Space>
-                <Button type="primary" onClick={this.saveMNP} disabled={!this.state.mnp_type || 
-                    !this.state.gateway_name} >Submit</Button>
-                <Button type="primary" onClick={() => this.props.history.push('/listmnp')}>Cancel</Button>
+                <Popconfirm
+                    title="Do you want to Add the record"
+                    onConfirm={this.saveMNP}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                <Button 
+                    type="primary" 
+                    //onClick={this.saveMNP} 
+                    disabled={!this.state.mnp_type || 
+                    !this.state.gateway_name} 
+                >Save</Button>
+                </Popconfirm>
+                <Popconfirm
+                    title="Do you want to reset the fields"
+                    onConfirm={this.onReset}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                <Button 
+                    type="primary" 
+                    //onClick={this.onReset} 
+                >Clear</Button>    
+                </Popconfirm>
+                <Popconfirm
+                    title="Do you want to cancel"
+                    onConfirm={() => this.props.history.push('/listmnp')}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                <Button 
+                    type="danger" 
+                    //onClick={() => this.props.history.push('/listmnp')}
+                >Cancel</Button>
+                </Popconfirm>
                 </Space>
                 </Form.Item>
-
+                </div>
                 </Form>
             </div>
-            </div></div>
+            </div>
+            </div>
         );
     }
 }
 
 export default  AddMNPGateway;
+

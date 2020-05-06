@@ -216,6 +216,7 @@ class AddRedirectionList extends Component{
                                 </Form.Item>
                             }
 
+                            <div className="buttonset">
                             <Form.Item > 
                                 <Space>
                                     <Button 
@@ -223,7 +224,7 @@ class AddRedirectionList extends Component{
                                         onClick={this.saveRedirectionList} 
                                         disabled={!this.state.listname || !this.state.listtype || !this.state.loadDistributionType}
                                         >
-                                        Submit
+                                        Save
                                     </Button>
 
                                     <Button 
@@ -240,7 +241,7 @@ class AddRedirectionList extends Component{
                                         </Button>
                                 </Space>
                             </Form.Item>
-
+                            </div>
                         </Form>
                     </div>
                 </div>

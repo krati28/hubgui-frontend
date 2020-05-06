@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const USER_API_BASE_URL = 'http://192.168.105.179:8101/users';
+const USER_API_BASE_URL = 'http://localhost:8105/users';
 
 class ApiService {
 

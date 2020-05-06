@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import PCDService from "../../service/PCDService";
-import {Form, Input, Button, Select, Typography, Space} from 'antd';
+import {Form, Input, Button, Select, Typography, Space, Popconfirm} from 'antd';
 
 import '../../styling/Styletable.css';
 const {Option} = Select;
@@ -99,6 +99,10 @@ class AddPCDetails extends Component{
             
     }
 
+    
+    onReset = () => {
+        this.formRef.current.resetFields();
+      };
     
     
 
@@ -300,16 +304,49 @@ class AddPCDetails extends Component{
                     />
                 </Form.Item>
                     
-
+                <div className="buttonset">   
                 <Form.Item > 
                 <Space>
-                <Button type="primary" onClick={this.savePointCodeDetails} disabled={!this.state.point_code 
+                    <Popconfirm
+                        title="Do you want to Add the record"
+                        onConfirm={this.savePointCodeDetails}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                    <Button 
+                    type="primary" 
+                    //onClick={this.savePointCodeDetails} 
+                    disabled={!this.state.point_code 
                     || !this.state.operator_name || !this.state.operator_country || !this.state.sap_id ||!this.state.tt||!this.state.np
-                    ||!this.state.ssn||!this.state.status ||!this.state.delay} >Submit</Button>
-                <Button type="primary" onClick={() => this.props.history.push('/listpcd')}>Cancel</Button>
-                </Space>
-                </Form.Item>
-
+                    ||!this.state.ssn||!this.state.status ||!this.state.delay} 
+                    >Save
+                    </Button>
+                    </Popconfirm>
+                    <Popconfirm
+                        title="Do you want to reset the fields"
+                        onConfirm={this.onReset}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                    <Button 
+                        type="primary" 
+                        //onClick={this.onReset} 
+                        >Clear</Button>
+                    </Popconfirm>
+                    <Popconfirm
+                        title="Do you want to cancel"
+                        onConfirm={()=>this.props.history.push('/listpcd')}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                    <Button 
+                        type="danger" 
+                        //onClick={() => this.props.history.push('/listpcd')}
+                        >Cancel</Button>
+                    </Popconfirm>
+                    </Space>
+                    </Form.Item>
+                </div>
         </Form>
             </div>
             </div>
@@ -319,4 +356,3 @@ class AddPCDetails extends Component{
 }
 
 export default  AddPCDetails;
-

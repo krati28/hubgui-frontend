@@ -2,9 +2,8 @@ import React, { Component } from 'react'
 import PCDService from "../../service/PCDService";
 import history from "../../History"
 //import '../../Styling/Styletable.css';
-import {Table ,Button, Form} from "antd"
+import {Table ,Button, Form, Popconfirm,} from "antd"
 import {  EditFilled , PlusCircleFilled,  DeleteFilled } from '@ant-design/icons';
-
 
 //const npvalue={0:"Unknown","1":"ISDN","2":"Telephony"}
 
@@ -16,7 +15,7 @@ class Pcddetails extends Component {
         pcd: [],
             message: null
         }
-        this.deletePcd = this.deletePcd.bind(this);
+        //this.deletePcd = this.deletePcd.bind(this);
         this.editPcd = this.editPcd.bind(this);
        this.addPcd = this.addPcd.bind(this);
         this.reloadPcdList = this.reloadPcdList.bind(this);
@@ -29,22 +28,22 @@ class Pcddetails extends Component {
     }
 
   
-        reloadPcdList() {
-            PCDService.fetchPcddetails()
-                .then((res) => {
-                    this.setState({pcd: res.data.result})
-                });
-        }
+    reloadPcdList() {
+        PCDService.fetchPcddetails()
+            .then((res) => {
+                this.setState({pcd: res.data.result})
+            });
+    }
     
     
     deletePcd(ptcode_id) {
+        
         PCDService.deletePcd(ptcode_id)
            .then(res => {
                this.setState({message : 'Pcd deleted successfully.'});
                this.setState({pcd: this.state.pcd.filter(pcd => pcd.ptcode_id !==ptcode_id )});
-           })
-
-    }
+           })}
+    
 
     editPcd(ptcode_id) {
         window.localStorage.setItem("ptcode_id", ptcode_id);
@@ -58,12 +57,14 @@ class Pcddetails extends Component {
         
     }
     state = {
+        filteredInfo: null,
         sortedInfo: null,
     };
     
 handleChange = (pagination, filters, sorter) => {
 console.log('Various parameters', pagination, filters, sorter);
 this.setState({
+    filteredInfo:filters,
     sortedInfo: sorter,
 });
 };
@@ -94,9 +95,9 @@ mapssn=(ssn)=>{
     return ssn;
 }
     render(){
-        let { sortedInfo} = this.state;
+        let { sortedInfo,filteredInfo} = this.state;
         sortedInfo = sortedInfo || {};
-        
+        filteredInfo = filteredInfo || {};
         const columns = [
             {
                 title: 'Point Code',
@@ -153,13 +154,26 @@ mapssn=(ssn)=>{
             title: 'SSN',
             dataIndex: 'ssn',
             key: 'ssn',
+            filters:[
+                {text:'HLR',value:6},
+                {text:'VLR',value:7},
+                {text:'MSC',value:8},
+                {text:'FNR',value:253},
+            ],
             render :ssn =>this.mapssn(ssn),
+            filteredValue: filteredInfo.ssn || null,
+            onFilter: (value, record) => record.ssn===value,
             } ,
             {
             title: 'PC Status',
             dataIndex: 'status',
             key: 'status',
-                
+            filters:[
+                {text:'Active',value:'A'},
+                {text:'Inactive',value:'I'},
+            ],   
+            filteredValue: filteredInfo.status || null,
+            onFilter: (value, record) => record.status.includes(value),
             },
             {
             title: 'Delay',
@@ -177,7 +191,12 @@ mapssn=(ssn)=>{
             title: 'Delete',
             dataIndex: 'delete',
             key: 'delete',
-            render: (text,record) => <DeleteFilled onClick={()=>this.deletePcd(record.ptcode_id)} />,
+            render: (text,record) => <Popconfirm
+            title="Are you sure delete this row?"
+            onConfirm={this.deletePcd.bind(this,record.ptcode_id)}
+            okText="Yes"
+            cancelText="No">
+            <DeleteFilled/></Popconfirm>,
             }
         ];
         return(
@@ -186,18 +205,18 @@ mapssn=(ssn)=>{
               <div className='topline'>Point Code Details</div>
                 <Form className="formset">
                     <Form.Item>
-               <Button type="primary" onClick={() => this.addPcd()}>Add
-                </Button>
-                </Form.Item>
-                <Form.Item >
-               <Table
-             columns={columns} 
-             dataSource={this.state.pcd} 
-             id="students"
-             bordered 
-             onChange={this.handleChange}  />
-             </Form.Item>
-             </Form>
+                    <Button  type="primary" onClick={() => this.addPcd()}>Add
+                        </Button>
+                        </Form.Item>
+                        <Form.Item >
+                    <Table
+                        columns={columns} 
+                        dataSource={this.state.pcd} 
+                        id="students"
+                        bordered 
+                        onChange={this.handleChange}  />
+                    </Form.Item>
+                </Form>
           </div>
         );
     }

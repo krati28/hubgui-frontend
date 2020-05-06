@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ApiService from "../../service/ApiService";
 import history from "../../History"
-import {Form, Input, Button, Select, Radio, Space} from 'antd';
+import {Form, Input, Button, Select, Radio, Space, Popconfirm} from 'antd';
 import '../../styling/Styletable.css';
 
 const {Option} = Select;
@@ -38,7 +38,7 @@ class AddOperatorCluster extends Component{
     componentDidMount() {
         this.loadUser();
         let initialPlanets = [];
-        fetch('http://localhost:8101/operatordetails')
+        fetch('http://localhost:8105/operatordetails')
             .then(response => {
                 return response.json();
             }).then(data => {
@@ -71,6 +71,8 @@ class AddOperatorCluster extends Component{
                 })
             });
     }
+
+    
 
     onChange = (e) =>{
         this.setState({ [e.target.name]: e.target.value },
@@ -116,6 +118,14 @@ class AddOperatorCluster extends Component{
                 });
         }
         
+    }
+
+    onReset =() =>{
+        this.formRef.current.resetFields();
+    }
+
+    cancel(){
+        history.push("environmentSetup-operatorCluster")
     }
 
     render(){
@@ -192,20 +202,45 @@ class AddOperatorCluster extends Component{
                                         {test.operator_name} </Option> )}
                                 </Select>
                             </Form.Item>
+                            <div className="buttonset">
                             <Form.Item > 
-                                <Space>
+                                <Space >
+                                <Popconfirm
+                                        title="are you sure you want to submit the data?"
+                                        onConfirm={this.saveUser}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
                                     <Button 
                                         type="primary" 
-                                        onClick={this.saveUser} 
+                                        // onClick={this.saveUser} 
                                         disabled={!this.state.cluster_name  || 
                                         !this.state.cluster_type || !this.state.operator_ids}
                                     >Submit</Button>
+                                    </Popconfirm>
+                                    <Popconfirm
+                                        title="do you want to reset the data?"
+                                        onConfirm={this.onReset}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
+                                    <Button type="primary">
+                                        Clear                                        
+                                    </Button>
+                                    </Popconfirm>
+                                    <Popconfirm
+                                        title="Are you sure you dont want to add any entry?"
+                                        onConfirm={this.cancel}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
                                     <Button 
-                                        type="danger" 
-                                        onClick={() => this.props.history.push('/environmentSetup-operatorCluster')}
+                                        type="danger"
                                     >Cancel</Button>
+                                    </Popconfirm>
                                 </Space>
                             </Form.Item>
+                            </div>
                         </Form>
                     </div>
                 </div>

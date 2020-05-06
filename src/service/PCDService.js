@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const PCD_API_BASE_URL = 'http://localhost:8101/pcddetails';
+const PCD_API_BASE_URL = 'http://localhost:8105/pcddetails';
 
 class PCDService {
 

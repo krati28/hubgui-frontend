@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const MNP_API_BASE_URL = 'http://localhost:8101/mnpdetails';
+const MNP_API_BASE_URL = 'http://localhost:8105/mnpdetails';
 
 class MNPService {
 

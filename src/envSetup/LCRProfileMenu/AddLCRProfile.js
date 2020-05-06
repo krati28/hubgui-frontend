@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 import LcrApiService from "../../service/LcrApiService";
 import history from "../../History";
 import '../../styling/Styletable.css';
-import { Form, Input, Select, Button, Space } from 'antd';
+import { Form, Input, Select, Button, Space , Radio, Popconfirm} from 'antd';
+import { TimePicker, DatePicker } from 'antd';
+import moment from 'moment';
+
+const dateFormatList = ['DD/MM/YYYY'];
+const format = 'HH:mm';
 
 const {Option} = Select;
 const formItemLayout = {
@@ -25,7 +30,13 @@ class AddLCRProfile extends Component{
             lcr_name: '',
             lcr_type: '',
             third_supp_retry: '',
-            message: null
+            message: null,
+            list:[],
+            showDate:false,
+            showDateDate:false,
+            showDestOper:true,
+            showExceptTimeBased: true,
+            showTimeBased:false,
         }
         this.saveLcr = this.saveLcr.bind(this);
         this.loadLcr = this.loadLcr.bind(this);
@@ -35,6 +46,19 @@ class AddLCRProfile extends Component{
 
     componentDidMount() {
         this.loadLcr();
+        let initialPlanets = [];
+        fetch('http://localhost:8105/operatordetails')
+            .then(response => {
+                return response.json();
+            }).then(data => {
+                //alert(JSON.stringify(data));
+            initialPlanets = data.result.map((operator_name) => {
+                return operator_name
+            });
+            this.setState({
+                list: initialPlanets,
+            })
+        });
     }
 
     loadLcr() {
@@ -65,6 +89,39 @@ class AddLCRProfile extends Component{
     handleDropdownChangeLCRType =(e) =>
     {
           this.setState({ lcr_type: e });
+          if(e==="0" || e==="1" || e==="3"){
+              this.setState({
+                showDate:false,
+                showDestOper:true,
+                showExceptTimeBased: true,
+                showTimeBased:false,
+              })
+          }
+          else if(e==="4"){
+              this.setState({
+                showDate:true,
+                  showDestOper:true,
+                showExceptTimeBased: false,
+                showTimeBased:true,
+              })
+          }
+    }
+
+    onChangedate =(e)=>{
+        this.setState({ [e.target.name]: e.target.value },
+            );
+            if(e===1){
+                this.setState({
+                    
+            showDateDate:false,
+                })
+            }
+            else if(e===2){
+                this.setState({
+                    showDateDate:true,
+
+                })
+            }
     }
 
     saveLcr = (e) => {
@@ -96,6 +153,14 @@ class AddLCRProfile extends Component{
             history.push('/environmentSetup-lcrProfile');
             });
         }
+    }
+
+    onReset =() =>{
+        this.formRef.current.resetFields();
+    }
+
+    cancel(){
+        history.push("environmentSetup-lcrProfile")
     }
 
     render(){
@@ -151,6 +216,146 @@ class AddLCRProfile extends Component{
                                     
                                 </Select>
                             </Form.Item>
+
+                                {this.state.showDate &&
+                                <Form.Item 
+                                label = "Special Date"
+                                name = "special_date"
+                                 labelAlign="left"
+                                 rules = {[{required:true, message:"Select a List Type!"}]}
+                                >
+                                    <Radio.Group name="special_date"  onChange={this.onChangedate} 
+                                     labelAlign="left"
+                    // value={this.state.value}
+                    >
+                        <Radio value={1} >Required</Radio>
+                        <Radio value={2}>Not Required</Radio>
+
+                    </Radio.Group>
+                                    
+                                    </Form.Item>}
+
+                                    {this.state.showDateDate &&
+                                    <Form.Item
+                                    label="Start Date" 
+                                    name="start_date" 
+                                    labelAlign="left"
+                                    rules={[{ required:true, message:"Supplier is Required"}]}
+                                    > 
+                                    <DatePicker 
+                                    placeholder="dd-mm-yyyy" format={dateFormatList} />
+                                </Form.Item>
+                                    }
+
+                                <div className="divset">
+                            {this.state.showDestOper && 
+                            <div>
+                            <p>LCR Policy1</p>
+                            <div>
+                            <Form.Item
+                                label="Dest Operator" 
+                                name="dest_oper" 
+                                labelAlign="left"
+                                rules={[{ required:true, message:"Customer is Required"}]}
+                                >
+                                    <Select name="dest_oper"
+                                    labelAlign="left"
+                                    style={{ width: "300px" }}
+                                    placeholder="Click here and Please select the operator"
+                                    onChange={this.handleDropdownChangeOperatorId}
+                                    >
+                                    {this.state.list.map((test) => 
+                                        <Option value={test.operator_name}> 
+                                        {test.operator_name} </Option> )}
+                                    </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label = "Cost"
+                                name = "cost"
+                                labelAlign="left"
+                                rules = {[{ 
+                                    required: true, 
+                                    message: 'Please input your the Cost!',
+                                    },
+                                ]}
+                            >
+                                <Input 
+                                    type="text" 
+                                    className="inputset"
+                                    placeholder = "Enter cost..."
+                                    name="cost"
+                                    labelAlign="left"
+                                    // value={this.state.lcr_name} 
+                                    // onChange={this.onChange} 
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label = "Percentage"
+                                name = "percentage"
+                                labelAlign="left"
+                                rules = {[{ 
+                                    required: true, 
+                                    message: 'Please enter percentage!',
+                                    },
+                                ]}
+                            >
+                                <Input 
+                                    type="text" 
+                                    className="inputset"
+                                    placeholder = "Enter percentage..."
+                                    name="percentage"
+                                    labelAlign="left"
+                                    // value={this.state.lcr_name} 
+                                    // onChange={this.onChange} 
+                                />
+                            </Form.Item>
+                            </div>
+                            </div>}
+                            {this.state.showExceptTimeBased &&  //customer
+                            <div style={{backgroundColor:"lightgrey"}}>
+                            <Form.Item
+                                label = "Position"
+                                name = "position"
+                                labelAlign="left"
+                                rules = {[{ 
+                                    required: true, 
+                                    message: 'Please input your Position!',
+                                    },
+                                ]}
+                            >
+                                <Input 
+                                    type="text" 
+                                    className="inputset"
+                                    placeholder = "Enter position..."
+                                    name="position"
+                                    labelAlign="left"
+                                    // value={this.state.lcr_name} 
+                                    // onChange={this.onChange} 
+                                />
+                            </Form.Item>
+                            </div>}
+
+                            {this.state.showTimeBased && //supplier
+                            <div style={{backgroundColor:"lightgrey" }}>
+                            <Form.Item
+                                label="Start Time" 
+                                name="start_time" 
+                                labelAlign="left"
+                                rules={[{ required:true, message:"Supplier is Required"}]}
+                                >
+                                    <TimePicker placeholder="HH:MM" format={format} />
+                            </Form.Item>
+                            <Form.Item
+                                label="End Time" 
+                                name="end_time" 
+                                labelAlign="left"
+                                rules={[{ required:true, message:"Supplier is Required"}]}
+                                >
+                                    <TimePicker placeholder="HH:MM" format={format} />
+                            </Form.Item>
+                            </div>}
+                            </div>
+                            <div style={{marginTop:"20px"}}>
                             <Form.Item
                                 label = "Third Party"
                                 name = "third_supp_retry"
@@ -166,19 +371,46 @@ class AddLCRProfile extends Component{
                                     onChange={this.onChange} 
                                 />
                             </Form.Item>
+                            </div>
+                            <div className="buttonset">
                             <Form.Item>
                                 <Space>
+                                <Popconfirm
+                                        title="are you sure you want to save the data?"
+                                        onConfirm={this.saveLcr}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
                                     <Button 
                                         type="primary" 
-                                        onClick={this.saveLcr} 
+                                        // onClick={this.saveLcr} 
                                         disabled={!this.state.lcr_name || !this.state.lcr_type } 
-                                    >Submit</Button>
+                                    >Save</Button>
+                                    </Popconfirm>
+                                    <Popconfirm
+                                        title="do you want to reset the data?"
+                                        onConfirm={this.onReset}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
+                                    <Button type="primary">
+                                        Clear                                        
+                                    </Button>
+                                    </Popconfirm>
+                                    <Popconfirm
+                                        title="do you want to reset the data?"
+                                        onConfirm={this.cancel}
+                                        okText="Yes"
+                                        cancelText="No"
+                                    >
                                     <Button 
                                         type="danger" 
-                                        onClick={() => this.props.history.push('/environmentSetup-lcrProfile')}
+                                        // onClick={() => this.props.history.push('/environmentSetup-lcrProfile')}
                                     >Cancel</Button>
+                                    </Popconfirm>
                                 </Space>
                             </Form.Item>
+                            </div>
                         </Form>
                     </div>
                 </div>

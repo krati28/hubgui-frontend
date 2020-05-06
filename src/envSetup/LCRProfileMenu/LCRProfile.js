@@ -5,7 +5,7 @@ import {  EditFilled , DeleteFilled , PlusCircleFilled } from '@ant-design/icons
 import { Table, Button } from 'antd';
 import 'antd/dist/antd.css';
 import '../../styling/Styletable.css';
-import { Form, Input, Radio } from 'antd';
+import { Form, Input, Radio, Popconfirm } from 'antd';
 
 const { Search } = Input;
 
@@ -15,9 +15,10 @@ class LCRProfile extends Component{
         this.state = {
             lcrdetails: [],
             sortedInfo: null,
+            filteredInfo: null,
             message: null
         }
-        this.deleteLcr = this.deleteLcr.bind(this);
+        // this.deleteLcr = this.deleteLcr.bind(this);
         this.editLcr = this.editLcr.bind(this);
         this.addLcr = this.addLcr.bind(this);
         this.reloadLcr = this.reloadLcr.bind(this);
@@ -35,14 +36,23 @@ class LCRProfile extends Component{
     }
 
     deleteLcr(lcrId) {
+      // var result=window.confirm("Do you want to delete ?");
+      //   if(result==true){
         LcrApiService.deleteLcr(lcrId)
            .then(res => {
                this.setState({message : 'User deleted successfully.'});
                this.setState({lcrdetails: this.state.lcrdetails.filter(
                  lcr_data => lcr_data.lcr_policy_id !== lcrId)});
            })
+        // }
+        // else if(result==false){
+        //   window.location.reload(false);
+        // }
     }
 
+    cancel(){
+      history.push('/environmentSetup-lcrProfile')
+    }
     editLcr(lcr_policy_id) {
         window.localStorage.setItem("lcrId", lcr_policy_id);
         history.push('/add-lcrProfile');
@@ -56,6 +66,7 @@ class LCRProfile extends Component{
     handleChange = (pagination, filters, sorter) => {
       console.log('Various parameters', pagination, filters, sorter);
       this.setState({
+        filteredInfo:filters,  
         sortedInfo: sorter,
       });
     };
@@ -91,8 +102,9 @@ class LCRProfile extends Component{
 
     render(){
         let {
-          sortedInfo} = this.state;
+          sortedInfo, filteredInfo} = this.state;
           sortedInfo = sortedInfo || {};
+          filteredInfo = filteredInfo || {};
    
         const columns = [
             {
@@ -115,7 +127,15 @@ class LCRProfile extends Component{
               title: 'LCR Type',
               dataIndex: 'lcr_type',
               key: 'lcr_type',
+              filters:[
+                {text:'Default LCR',value:"0"},
+                {text:'SC_MT',value:"1"},
+                {text:'SPEC_LCR',value:"3"},
+                {text:'Time Based LCR',value:"4"},
+            ], 
               render: lcr_type => this.maplcrtype(lcr_type),
+              filteredValue: filteredInfo.lcr_type || null,
+              onFilter: (value, record) => record.lcr_type===value,
             },
             {
                 title: 'Edit',
@@ -128,13 +148,21 @@ class LCRProfile extends Component{
                 title: 'Delete',
                 dataIndex: 'delete',
                 key: 'delete',
-                render: (text, record) => <DeleteFilled 
-                onClick={() => { this.deleteLcr(record.lcr_policy_id); }}/>,
+                render: (text, record) =>
+                <Popconfirm
+                  title="Are you sure delete this entry?"
+                  onConfirm={this.deleteLcr.bind(this,record.lcr_policy_id)}
+                  onCancel={this.cancel}
+                  okText="Yes"
+                  cancelText="No"
+                ><DeleteFilled 
+                />
+                </Popconfirm> ,
               },
-              {
-                title: 'Export',
-                dataIndex: 'export',
-              },
+              // {
+              //   title: 'Export',
+              //   dataIndex: 'export',
+              // },
           ];
 
 
