@@ -59,7 +59,7 @@ class AddRedirectionList extends Component{
                         listname: rllist.listname,
                         listtype: rllist.listtype,
                         loadDistributionType: rllist.loadDistributionType,
-                    })
+                    }, () => console.log(this.state));
                     
                     this.formRef.current.setFieldsValue({
                         id: rllist.id,
@@ -75,15 +75,18 @@ class AddRedirectionList extends Component{
         this.setState({[e.target.name]: e.target.value});
     }
 
+    onReset = () => {
+        this.formRef.current.resetFields();
+    }
         
     handleDropdownChangeType = (e) => {
-            this.setState({listtype: e});
-            if(e === "esme"){
-                this.setState({ esmeAccount:true, pointcodeAccount:true})
-            }
-            else{
-                this.setState({ pointcodeAccount:true, esmeAccount:false})
-            }
+        this.setState({listtype: e});
+        if(e === "esme"){
+            this.setState({ esmeAccount:true, pointcodeAccount:true})
+        }
+        else{
+            this.setState({ pointcodeAccount:true, esmeAccount:false})
+        }
             // console.log({e});
     }
         
@@ -99,7 +102,8 @@ class AddRedirectionList extends Component{
 
     saveRedirectionList =(e) => {
         e.preventDefault();
-        let user = {id:this.state.id, listname: this.state.listname, listtype: this.state.listtype, loadDistributionType: this.state.loadDistributionType};
+        let user = {id:this.state.id, listname: this.state.listname, listtype: this.state.listtype, 
+            loadDistributionType: this.state.loadDistributionType};
         RedirectionListService.addUser(user)
             .then(res => {
                 this.setState({message : 'User added successfully.'});
@@ -140,8 +144,7 @@ class AddRedirectionList extends Component{
                                     placeholder = "Enter list name..."
                                     name="listname"
                                     value={this.state.listname} 
-                                    onChange={this.onChange} 
-                                />
+                                    onChange={this.onChange} />
                             </Form.Item>
                         
                             <Form.Item
@@ -215,8 +218,26 @@ class AddRedirectionList extends Component{
 
                             <Form.Item > 
                                 <Space>
-                                    <Button type="primary" onClick={this.saveRedirectionList} disabled={!this.state.listname || !this.state.listtype || !this.state.loadDistributionType} >Submit</Button>
-                                    <Button type="danger" onClick={() => history.push('/environmentSetup-redirectionList')}>Cancel</Button>
+                                    <Button 
+                                        type="primary" 
+                                        onClick={this.saveRedirectionList} 
+                                        disabled={!this.state.listname || !this.state.listtype || !this.state.loadDistributionType}
+                                        >
+                                        Submit
+                                    </Button>
+
+                                    <Button 
+                                        type="danger" 
+                                        onClick={() => history.push('/environmentSetup-redirectionList')}>
+                                        Cancel
+                                    </Button>
+
+                                    <Button
+                                        type="primary"
+                                        onClick={this.onReset}
+                                        >
+                                            Clear
+                                        </Button>
                                 </Space>
                             </Form.Item>
 

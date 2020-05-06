@@ -58,11 +58,11 @@
 
 /*sets form alignment*/
 .formalign{
-  width: 500px;
-  display: flex;
+  width: 600px;
+  /* display: flex; */
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
+  margin-top: 0px;
 
 }
 
@@ -84,4 +84,6 @@
   padding-bottom: 0.3em;
   padding-top: 0.3em;
 }
+
+
 

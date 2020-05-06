@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import {Typography, Form, Input, DatePicker, Select, Button, InputNumber, Space, Card} from 'antd';
+import { Form, Input, DatePicker, Select, Button, InputNumber, Space,  Card} from 'antd';
 import history from "../../History";
-
 import '../../styling/Styletable.css';
+import DealService from '../../service/DealService';
 
-const {Title} = Typography;
 const {Option} = Select;
 
 const formItemLayout = {
@@ -19,17 +18,20 @@ const formItemLayout = {
   };
 class AddDealManagement extends Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
-            dealName: '',
-            valPeriod: '',
-            dealRate: '',
-            startDate:'',
-            dealType:'',
-            dealOptions:'',
-            dealValue:'',
+            id:'',
+            name: '',
+            validity_prd: '',
+            rate: '',
+            start_date:'',
+            type:'',
+            options:'',
+            value:'',
             message:null,
+
+            customerList:[],
 
             showCustomer:false,
             showSupplier:false,
@@ -38,12 +40,94 @@ class AddDealManagement extends Component{
             showDestCountry:false,
             showDestOperator: false
         }
-        this.handleDropdownDealType = this.handleDropdownDealType.bind(this)
+        this.saveDealMgmt = this.saveDealMgmt.bind(this);
+        //Dropdowm
+        this.handleDropdownDealType = this.handleDropdownDealType.bind(this);
+        this.handleChangeDealOption = this.handleChangeDealOption.bind(this);
+        //inputs
+        this.handleChangeDate = this.handleChangeDate.bind(this);
+        // this.onChangeRate = this.onChangeRate.bind(this);
+        this.onChangePeriod = this.onChangePeriod.bind(this);
+        this.onChangeValue = this.onChangeValue.bind(this);
+        
+        this.loadDealManagement = this.loadDealManagement.bind(this);
+        this.formRef = React.createRef();
     }
 
+    componentDidMount(){
+        this.loadDealManagement();
+
+        let initialPlanets = [];
+            fetch('http://localhost:8105/customer')
+                .then(response => {
+                    return response.json();
+                }).then(data => {
+                initialPlanets = data.result.map((name) => {
+                    return name ;
+                });
+                this.setState({
+                    customerList: initialPlanets,
+                });
+            });
+    }
+
+    loadDealManagement(){ 
+        DealService.fetchDealById(window.localStorage.getItem("id"))
+            .then((res) => {
+                let deals = res.data.result;
+                this.setState({
+                    id:deals.id,
+                    name:deals.name,
+                    validity_prd:deals.validity_prd,
+                    rate:deals.rate,
+                    start_date:deals.start_date,
+                    type:deals.type,
+                    options:deals.options,
+                    value:deals.value
+                }); 
+
+                switch(deals.type){
+                    case 1: deals.type="Customer"; break;
+                    case 3: deals.type="Supplier"; break;
+                    case 4: deals.type="Source Operator"; break;
+                    case 5: deals.type="Source Country"; break;
+                    case 6: deals.type="Customer and Destination Country";  break;
+                    case 7: deals.type="Customer and Destination Operator";  break;
+                    case 8: deals.type="Supplier and Destination Country"; break;
+                    case 9: deals.type="Supplier and Destination Operator"; break;
+                }
+
+                switch(deals.options){
+                    case 1: deals.options="Revenue Based"; break;
+                    case 2: deals.options="Cost Based"; break;
+                    case 3: deals.options="Volume Based"; break;
+                }
+                
+                this.formRef.current.setFieldsValue({
+                    id:deals.id,
+                    name:deals.name,
+                    validity_prd:deals.validity_prd,
+                    rate:deals.rate,
+                    start_date:deals.start_date,
+                    type:deals.type,
+                    options:deals.options,
+                    value:deals.value
+                })
+            })
+    }
+
+    onChange = (e) => {this.setState({[e.target.name]: e.target.value})}
+
+    onChangePeriod = (e) => {this.setState({validity_prd : e})}
+    onChangeValue(e){this.setState({value : e})}
+    // onChangeRate(e){this.setState({rate:e})}
+    handleChangeDate(e){this.setState({start_date: e})}
+
+    handleChangeDealOption= (e) => { this.setState({options:e})}
+
     handleDropdownDealType =(e) => {
-        this.setState({ dealType: e});
-        if(e === "customer"){
+        this.setState({ type: e});
+        if(e === "1"){
             this.setState({ 
                 showCustomer: true, 
                 showSupplier: false, 
@@ -53,7 +137,7 @@ class AddDealManagement extends Component{
                 showDestOperator: false
             })
         }
-        else if(e === "supplier"){
+        else if(e === "3"){
             this.setState({
                 showCustomer: false, 
                 showSupplier: true, 
@@ -63,7 +147,7 @@ class AddDealManagement extends Component{
                 showDestOperator: false,
             })
         }
-        else if(e === "source_operator"){
+        else if(e === "4"){
             this.setState({
                 showCustomer: false, 
                 showSupplier: false, 
@@ -73,7 +157,7 @@ class AddDealManagement extends Component{
                 showDestOperator: false,
             })
         }
-        else if(e === "source_country"){
+        else if(e === "5"){
             this.setState({
                 showCustomer: false, 
                 showSupplier: false, 
@@ -83,7 +167,7 @@ class AddDealManagement extends Component{
                 showDestOperator: false,
             })
         }
-        else if(e === "customer_dest_country"){
+        else if(e === "6"){
             this.setState({
                 showCustomer: true, 
                 showSupplier: false, 
@@ -93,7 +177,7 @@ class AddDealManagement extends Component{
                 showDestOperator: false
             })
         }
-        else if(e === "customer_dest_operator"){
+        else if(e === "7"){
             this.setState({
                 showCustomer: true, 
                 showSupplier: false, 
@@ -103,7 +187,7 @@ class AddDealManagement extends Component{
                 showDestOperator: true
             })
         }
-        else if(e === "supplier_dest_country"){
+        else if(e === "8"){
             this.setState({
                 showCustomer: false, 
                 showSupplier: true, 
@@ -113,7 +197,7 @@ class AddDealManagement extends Component{
                 showDestOperator: false
             })
         }
-        else if(e === "supplier_dest_operator"){
+        else if(e === "9"){
             this.setState({
                 showCustomer: false, 
                 showSupplier: true, 
@@ -124,6 +208,23 @@ class AddDealManagement extends Component{
             })
         }
     }
+
+    saveDealMgmt = (e) => {
+        e.preventDefault();
+        let deal_data = {id: this.state.id, name: this.state.name, validity_prd: this.state.validity_prd,
+                    rate:this.state.rate, start_date:this.state.start_date, type:( parseInt(this.state.type)) ,
+                    options:(parseInt( this.state.options)), value:this.state.value
+                    };
+            DealService.addDeal(deal_data)
+                    .then(res => {
+                        console.log(this.state.value);
+                // console.log(this.state.value);
+                // console.log(this.state.start_date);
+                this.setState({message : 'Deal added successfully.'});
+                history.push('/environmentSetup-dealManagement');
+            })
+    }
+
     render(){
         return(
             <div >
@@ -131,29 +232,37 @@ class AddDealManagement extends Component{
                 <div className='topline'>
                     Add Deal Management
                 </div>
+                
                 <div className="abc">
+                    <Card style={{ boxShadow: '3px 1px 10px #888888', marginTop:"15px" }}>
                     <div className="formalign">
                         <Form
                             name="basic" 
-                            {...formItemLayout}
+                            ref={this.formRef}
                             initialValues={{ remember: true }}
                             className="formset"
+                            {...formItemLayout}
                         >
                             <Form.Item  //deal name
                                 label="Deal Name"
-                                name="dealName" 
+                                name="name" 
                                 labelAlign="left"
+                                
                                 rules={[{required:true, message:"Deal Name is required"}]}
                                 >
                                     <Input 
                                         className="inputset" 
                                         type="text" 
-                                        labelAlign="left"/>
+                                        labelAlign="left"
+                                        placeholder="Enter Deal Name"
+                                        name="name"
+                                        value={this.state.name}
+                                        onChange={this.onChange} />
                             </Form.Item>
 
-                            <Form.Item  //val period
+                            <Form.Item  //val period   
                                 label="Val Period" 
-                                name="valPeriod" 
+                                name="validity_prd" 
                                 labelAlign="left"
                                 rules={[{required:true, message:"Validity Period is required"}]}
                                 >
@@ -161,34 +270,46 @@ class AddDealManagement extends Component{
                                         labelAlign="left" 
                                         className="inputset" 
                                         placeholder="Enter validity period in seconds" 
-                                        type="text"/>
+                                        type="text"
+                                        name="validity_prd"
+                                        value={this.state.validity_prd}
+                                        onChange={this.onChangePeriod} />
                             </Form.Item>
 
                             <Form.Item  //deal rate
                                 label="Deal Rate" 
-                                name="dealRate" 
+                                name="rate" 
                                 labelAlign="left"
                                 rules={[{required:true, message:"Deal Rate is required"}]}
                                 >
                                     <Input 
+                                        placeholder="Enter Deal Rate"
                                         labelAlign="left" 
                                         className="inputset" 
-                                        type="text"/>
+                                        type="text"
+                                        name="rate"
+                                        value={this.state.rate}
+                                        onChange={this.onChange} />
                             </Form.Item>
 
-                            <Form.Item //start date
+                            <Form.Item //start date  
                                 label="Start Date" 
-                                name="startDate" 
+                                name="start_date" 
                                 labelAlign="left"
+                                type="date"
                                 rules={[{required:true, message:"Start Date is required"}]}
                                 >
-                                    <DatePicker labelAlign="left"/>
+                                    <DatePicker 
+                                        labelAlign="left"
+                                        name="start_date"
+                                        value={this.state.start_date}
+                                        onChange={this.handleChangeDate} />
                             </Form.Item>
 
-                            <Form.Item // deal type
+                            <Form.Item // deal type  working
                                 label="Deal Type" 
-                                name="dealType" 
-                                labelAlign="left"
+                                name="type" 
+                                labelAlign="left" 
                                 rules={[{ required:true, message:"Deal Type is Required"}]}
                                 >
                                     <Select 
@@ -196,14 +317,14 @@ class AddDealManagement extends Component{
                                         style={{width:"300px"}} 
                                         onChange={this.handleDropdownDealType}
                                         labelAlign="left">
-                                        <Option value="customer">Customer</Option>
-                                        <Option value="supplier">Supplier</Option>
-                                        <Option value="source_operator">Source Operator</Option>
-                                        <Option value="source_country">Source Country</Option>
-                                        <Option value="customer_dest_country">Customer and Destination Country</Option>
-                                        <Option value="customer_dest_operator">Customer and Destination Operator</Option>
-                                        <Option value="supplier_dest_country">Supplier and Destination Country</Option>
-                                        <Option value="supplier_dest_operator">Supplier and Destination Operator</Option>
+                                        <Option value="1">Customer</Option>
+                                        <Option value="3">Supplier</Option>
+                                        <Option value="4">Source Operator</Option>
+                                        <Option value="5">Source Country</Option>
+                                        <Option value="6">Customer and Destination Country</Option>
+                                        <Option value="7">Customer and Destination Operator</Option>
+                                        <Option value="8">Supplier and Destination Country</Option>
+                                        <Option value="9">Supplier and Destination Operator</Option>
                                     </Select>
                             </Form.Item>
                             
@@ -214,8 +335,11 @@ class AddDealManagement extends Component{
                                 labelAlign="left"
                                 rules={[{ required:true, message:"Customer is Required"}]}
                                 >
-                                    <Select>
-                                        <Option>To be added</Option>
+                                    <Select style={{width:"300px"}} >
+                                        {
+                                            this.state.customerList.map(( nimish) => 
+                                            <Option> {nimish.name} </Option> )
+                                        }
                                     </Select>
                             </Form.Item>}
 
@@ -226,7 +350,7 @@ class AddDealManagement extends Component{
                                 labelAlign="left"
                                 rules={[{ required:true, message:"Supplier is Required"}]}
                                 >
-                                    <Select>
+                                    <Select style={{width:"300px"}} >
                                         <Option>To be added</Option>
                                     </Select>
                             </Form.Item>}
@@ -238,7 +362,7 @@ class AddDealManagement extends Component{
                                 labelAlign="left"
                                 rules={[{ required:true, message:"Source Operator is Required"}]}
                                 >
-                                    <Select>
+                                    <Select style={{width:"300px"}} >
                                         <Option>To be added</Option>
                                     </Select>
                             </Form.Item>}
@@ -250,7 +374,7 @@ class AddDealManagement extends Component{
                                 labelAlign="left"
                                 rules={[{ required:true, message:"Source Country is Required"}]}
                                 >
-                                    <Select>
+                                    <Select style={{width:"300px"}} >
                                         <Option>To be added</Option>
                                     </Select>
                             </Form.Item>}
@@ -262,7 +386,7 @@ class AddDealManagement extends Component{
                                 labelAlign="left"
                                 rules={[{ required:true, message:"Destination Country is Required"}]}
                                 >
-                                    <Select>
+                                    <Select style={{width:"300px"}} >
                                         <Option>To be added</Option>
                                     </Select>
                             </Form.Item>}
@@ -274,41 +398,55 @@ class AddDealManagement extends Component{
                                 labelAlign="left"
                                 rules={[{ required:true, message:"Destination Operator is Required"}]}
                                 >
-                                    <Select>
+                                    <Select style={{width:"300px"}} >
                                         <Option>To be added</Option>
                                     </Select>
                             </Form.Item>}
 
-                            <Form.Item  //deal options
+                            <Form.Item  //deal options  working
                                 label="Deal Options" 
-                                name="dealOptions" 
+                                name="options" 
                                 labelAlign="left"
+                                
                                 rules={[{ required:true, message:"Deal Options is Required"}]}
                                 >
-                                    <Select placeholder="Select" style={{width:"300px"}}>
-                                        <Option value="revenue_bases">Revenue Based</Option>
-                                        <Option value="cost_based">Cost Based</Option>
-                                        <Option value="volume_based">Volume Based</Option>
-                                    </Select>
+                                <Select 
+                                    placeholder="Select" 
+                                    onChange={this.handleChangeDealOption}
+                                    style={{width:"300px"}}>
+                                        <Option value="1">Revenue Based</Option>
+                                        <Option value="2">Cost Based</Option>
+                                        <Option value="3">Volume Based</Option>
+                                </Select>
                             </Form.Item>
 
                             <Form.Item  //deal value
                                 label="Deal Value" 
-                                name="dealValue" 
+                                name="value" 
                                 labelAlign="left"
                                 rules={[{ required:true, message:"Deal Value is Required"}]}
                                 >
-                                    <Input  
+                                    <InputNumber
+                                        placeholder="Enter Deal Value"
                                         labelAlign="left" 
                                         className="inputset" 
-                                        type="text"/>
+                                        type="text"
+                                        name="value"
+                                        value={this.state.value}
+                                        onChange={this.onChangePeriod}
+                                        >
+                                    </InputNumber>
+                                    
                             </Form.Item>
                             
+                                {/* Buttons */}
                             <Form.Item>  
+                                <center>
                                 <Space>
                                     <Button 
                                         type="primary" 
-                                        onClick={this.saveDealMgmt}>Add
+                                        onClick={this.saveDealMgmt}>
+                                        Add
                                     </Button>
                                     <Button 
                                         type="danger" 
@@ -316,10 +454,13 @@ class AddDealManagement extends Component{
                                         Cancel
                                     </Button>
                                 </Space>
+                                </center>
                             </Form.Item>
                         </Form>
                     </div>
+                        </Card>
                 </div>
+               
             </div>
         )
     }

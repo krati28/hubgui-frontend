@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const USER_API_BASE_URL = 'http://localhost:8101/rllist';
+const USER_API_BASE_URL = 'http://localhost:8105/rllist';
 
 class RedirectionListService {
 

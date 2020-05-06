@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import RedirectionListService from "../../service/RedirectionListService";
-import { Table,Button, Typography, Form} from 'antd';
-import {EditFilled, DeleteFilled, PlusCircleFilled} from '@ant-design/icons'
+import { Table,Button, Typography, Form, Popconfirm} from 'antd';
+import {EditFilled, DeleteFilled} from '@ant-design/icons';
+
 import 'antd/dist/antd.css'
 import history from "../../History"
 import '../../styling/Styletable.css'
-
+ 
 const {Title} = Typography;
 
 class RedirectionList extends Component{
@@ -16,7 +17,6 @@ class RedirectionList extends Component{
             users: [],
             message:null
         }
-        this.deleteUser = this.deleteUser.bind(this);
         this.editUser = this.editUser.bind(this);
         this.addUser = this.addUser.bind(this);
         this.reloadUserList = this.reloadUserList.bind(this);
@@ -43,8 +43,6 @@ class RedirectionList extends Component{
 
     editUser(id){
         window.localStorage.setItem("id", id);
-        // alert("list .. "+window.localStorage.gsetItem("id"));
-        // console.log()
         history.push('/add-redirectionList');
     }
 
@@ -52,7 +50,9 @@ class RedirectionList extends Component{
         window.localStorage.removeItem("id");
         history.push('/add-redirectionList');
     }
-    
+
+
+
     state = {
         sortedInfo: null,
     };
@@ -111,8 +111,15 @@ class RedirectionList extends Component{
                 title: 'Delete',
                 dataIndex: 'delete',
                 key: 'delete',
-                render: (text, record) => <DeleteFilled 
-                onClick={() => {this.deleteUser(record.id);}}/>,
+                render: (text, record) =>
+                <Popconfirm
+                    title="Are you sure delete this entry?"
+                    onConfirm = {this.deleteUser.bind(this,record.id) }
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <DeleteFilled />
+                </Popconfirm>,
             }
         ];
         
@@ -120,17 +127,20 @@ class RedirectionList extends Component{
             <div >
                 
               <div className='topline'>Redirection List</div>
-            <Form className='formset' >
-                <Form.Item>
-                <Button type="primary" onClick={() => this.addUser()}> Add user</Button></Form.Item>
-                <Form.Item>
-                    <Table 
-                    columns={columns}
-                    dataSource={this.state.users}
-                    bordered
-                    id="students"
-                    onChange={this.handleChange}
-                /></Form.Item>
+                <Form className='formset' >
+                    <Form.Item>
+                        <Button type="primary" onClick={()=>this.addUser()}> Add user</Button>
+                    </Form.Item>
+                
+                    <Form.Item>
+                        <Table 
+                            columns={columns}
+                            dataSource={this.state.users}
+                            bordered
+                            id="students"
+                            onChange={this.handleChange}
+                            />
+                    </Form.Item>
                 </Form>
             </div>
         )
