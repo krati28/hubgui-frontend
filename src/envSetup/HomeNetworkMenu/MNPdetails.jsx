@@ -2,15 +2,81 @@ import React, { Component } from 'react'
 import MNPService from "../../service/MNPService";
 import history from "../../History";
 import '../../styling/Styletable.css';
+import{NavLink} from "react-router-dom";
+import {Breadcrumb} from "antd";
 import {Table ,Button, Form,Popconfirm,Input,Space} from "antd"
-import {  EditFilled , PlusCircleFilled,  DeleteFilled,SearchOutlined } from '@ant-design/icons';
+//import {  EditFilled , PlusCircleFilled,  DeleteFilled,SearchOutlined } from '@ant-design/icons';
+import {  EditFilled , DeleteFilled , PlusCircleFilled, AlignCenterOutlined , SearchOutlined} from '@ant-design/icons';
+import { Resizable } from 'react-resizable';
 
 class MNPdetails extends Component {
     constructor(props) {
         super(props)
         this.state = {
         mnp: [],
-            message: null
+        searchText: '',
+        searchedColumn: '',
+        filteredInfo: null,
+        sortedInfo: null,
+        columns : [
+          {
+              title: 'Gateway ID',
+              dataIndex: 'mnp_id',
+              key: 'mnp_id',
+              width:40,
+              ...this.getColumnSearchProps('mnp_id'),
+              sorter: (a, b) => a.mnp_id- b.mnp_id,
+              //sortOrder: sortedInfo.columnKey === 'mnp_id' && sortedInfo.order,
+              ellipsis: true,
+          },
+          {
+              title: 'Gateway Type',
+              dataIndex: 'mnp_type',
+              key: 'mnp_type',
+              width:50,
+              filters: [
+                  { text: 'Redis', value: 'Redis' },
+                  { text:  'Enum' ,value:'Enum'},
+                  { text: 'Cache', value: 'Cache' },
+                  ],
+            //filteredValue: filteredInfo.mnp_type || null,
+              onFilter: (value, record) => record.mnp_type.includes(value),
+              sorter: (a, b) => a.mnp_type.localeCompare(b.mnp_type),
+              //sortOrder: sortedInfo.columnKey === 'mnp_type' && sortedInfo.order,
+              ellipsis: true,
+          },
+          {
+              title: 'Gateway Name',
+              dataIndex: 'gateway_name',
+              key: 'gateway_name',
+              width:50,
+              ...this.getColumnSearchProps('gateway_name'),
+              sorter: (a, b) => a.gateway_name.localeCompare(b.gateway_name),
+                  //sortOrder: sortedInfo.columnKey === 'gateway_name' && sortedInfo.order,
+                  ellipsis: true,
+                  //...this.getColumnSearchProps('gateway_name'),
+          },
+          {
+              title: 'Edit',
+              dataIndex: 'edit',
+              key: 'edit',
+              width:30,
+              render: (text,record) => <EditFilled onClick={() => this.editMNP(record.mnp_id)} />,
+          },
+          {
+              title: 'Delete',
+              dataIndex: 'delete',
+              key: 'delete',
+              width:30,
+              render: (text,record) =>  <Popconfirm
+              title="Are you sure delete this row?"
+              onConfirm={this.deleteMNP.bind(this,record.mnp_id)}
+              okText="Yes"
+              cancelText="No">
+              <DeleteFilled/></Popconfirm>
+          }
+        ],
+        message: null
         }
         //this.deleteMNP = this.deleteMNP.bind(this);
         this.editMNP = this.editMNP.bind(this);
@@ -20,24 +86,24 @@ class MNPdetails extends Component {
     }
 
     componentDidMount() {
-        this.reloadMNPList();
+      this.reloadMNPList();
     }
 
-  
-        reloadMNPList() {
-            MNPService.fetchMNPdetails()
-                .then((res) => {
-                    this.setState({mnp: res.data.result})
-                });
-        }
+    reloadMNPList() {
+      MNPService.fetchMNPdetails()
+          .then((res) => {
+              this.setState({mnp: res.data.result})
+          });
+    }
     
     
     deleteMNP(mnp_id) {
-        MNPService.deleteMNP(mnp_id)
-           .then(res => {
-               this.setState({message : 'MNP deleted successfully.'});
-               this.setState({mnp: this.state.mnp.filter(mnp => mnp.mnp_id !==mnp_id )});
-           })}
+      MNPService.deleteMNP(mnp_id)
+          .then(res => {
+              this.setState({message : 'MNP deleted successfully.'});
+              this.setState({mnp: this.state.mnp.filter(mnp => mnp.mnp_id !==mnp_id )});
+      })
+    }
     
 
     editMNP(mnp_id) {
@@ -52,141 +118,101 @@ class MNPdetails extends Component {
         history.push('/add-mnp');
         
     }
-    state = { searchText: '',
-    searchedColumn: '',
-        filteredInfo: null,
-        sortedInfo: null,
-    };
     
-handleChange = (pagination, filters, sorter) => {
-console.log('Various parameters', pagination, filters, sorter);
-this.setState({
-    filteredInfo: filters,
-    sortedInfo: sorter,
-});
-};
-getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={node => {
-            this.searchInput = node;
-          }}
-          placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-            Reset
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-    onFilter: (value, record) =>
-      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: visible => {
-      if (visible) {
-        setTimeout(() => this.searchInput.select());
-      }
-    },
-    // render: text =>
-    //   this.state.searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-    //       searchWords={[this.state.searchText]}
-    //       autoEscape
-    //       textToHighlight={text.toString()}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
-  });
-
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    this.setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
+  handleChange = (pagination, filters, sorter) => {
+        console.log('Various parameters', pagination, filters, sorter);
+        this.setState({
+            filteredInfo: filters,
+            sortedInfo: sorter,
+      });
+  };
+    getColumnSearchProps = dataIndex => ({
+      filterDropdown: ({ setSelectedKeys,
+        selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+          <Input
+            ref={node => {
+              this.searchInput = node;
+            }}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            style={{ width: 188, marginBottom: 8, display: 'block' }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{ width: 90 }}
+            >
+              Search
+            </Button>
+            <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+              Reset
+            </Button>
+          </Space>
+        </div>
+      ),
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+      onFilter: (value, record) =>
+        record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+      onFilterDropdownVisibleChange: visible => {
+        if (visible) {
+          setTimeout(() => this.searchInput.select());
+        }
+      },
     });
-  };
 
-  handleReset = clearFilters => {
-    clearFilters();
-    this.setState({ searchText: '' });
-  };
+    handleSearch = (selectedKeys, confirm, dataIndex) => {
+      confirm();
+      this.setState({
+        searchText: selectedKeys[0],
+        searchedColumn: dataIndex,
+      });
+    };
 
-    render(){
+    handleReset = clearFilters => {
+      clearFilters();
+      this.setState({ searchText: '' });
+    };
+
+    handleResize = index => (e, { size }) => {
+    this.setState(({ columns }) => {
+    const nextColumns = [...columns];
+    nextColumns[index] = {
+      ...nextColumns[index],
+      width: size.width,
+    };
+    return { columns: nextColumns };
+    });
+};
+    
+   
+  
+  render(){
+      const columns = this.state.columns.map((col, index) => ({
+        ...col,
+        onHeaderCell: column => ({
+          width: column.width,
+          onResize: this.handleResize(index),
+        }),
+      }));
         let { sortedInfo,filteredInfo} = this.state;
         sortedInfo = sortedInfo || {};
         filteredInfo=filteredInfo || {};
-        const columns = [
-            {
-                title: 'Gateway ID',
-                dataIndex: 'mnp_id',
-                key: 'mnp_id',
-                sorter: (a, b) => a.mnp_id- b.mnp_id,
-                sortOrder: sortedInfo.columnKey === 'mnp_id' && sortedInfo.order,
-                ellipsis: true,
-            },
-            {
-            title: 'Gateway Type',
-            dataIndex: 'mnp_type',
-            key: 'mnp_type',
-            filters: [
-                { text: 'Redis', value: 'Redis' },
-                { text:  'Enum' ,value:'Enum'},
-                { text: 'Cache', value: 'Cache' },
-                ],
-              filteredValue: filteredInfo.mnp_type || null,
-              onFilter: (value, record) => record.mnp_type.includes(value),
-            sorter: (a, b) => a.mnp_type.localeCompare(b.mnp_type),
-                sortOrder: sortedInfo.columnKey === 'mnp_type' && sortedInfo.order,
-                ellipsis: true,
-            },
-            {
-            title: 'Gateway Name',
-            dataIndex: 'gateway_name',
-            key: 'gateway_name',
-            sorter: (a, b) => a.gateway_name.localeCompare(b.gateway_name),
-                sortOrder: sortedInfo.columnKey === 'gateway_name' && sortedInfo.order,
-                ellipsis: true,
-                //...this.getColumnSearchProps('gateway_name'),
-            },
-            {
-            title: 'Edit',
-            dataIndex: 'edit',
-            key: 'edit',
-            render: (text,record) => <EditFilled onClick={() => this.editMNP(record.mnp_id)} />,
-            },
-            {
-            title: 'Delete',
-            dataIndex: 'delete',
-            key: 'delete',
-            render: (text,record) =>  <Popconfirm
-            title="Are you sure delete this row?"
-            onConfirm={this.deleteMNP.bind(this,record.mnp_id)}
-            okText="Yes"
-            cancelText="No">
-            <DeleteFilled/></Popconfirm>
-            }
-        ];
         return(
+          
             <div>
             <div className='topline'>MNP Gateway Details</div>
               <Form className="formset">
+              <Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
+                <Breadcrumb.Item key="homenetwork">
+                    <NavLink to="/environmentSetup-homenetwork">Home Network</NavLink>
+                </Breadcrumb.Item>  
+                <Breadcrumb.Item>MNP Gateway Details</Breadcrumb.Item>
                   <Form.Item>
                   <div className="highlight">
                <Button type="primary" onClick={() => this.addMNP()}>Add
@@ -194,14 +220,19 @@ getColumnSearchProps = dataIndex => ({
                 </div>
                 
                 </Form.Item>
+                <center>
                 <Form.Item>
                <Table
-             columns={columns} 
-             dataSource={this.state.mnp} 
-             id="students"
-             bordered 
-             onChange={this.handleChange}  />
+                    columns={columns} 
+                    dataSource={this.state.mnp} 
+                    id="students"
+                    bordered 
+                    onChange={this.handleChange} 
+                    size="small" 
+                    style={{width:700}}
+             />
              </Form.Item>
+             </center>
              </Form>
           </div>
         );

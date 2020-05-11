@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import ApiService from "../../service/ApiService";
 import history from "../../History"
-import {Form, Input, Button, Select, Radio, Space, Popconfirm} from 'antd';
+import {Form, Input, Button, Select, Radio, Space, Popconfirm, Breadcrumb} from 'antd';
 import '../../styling/Styletable.css';
+import {NavLink} from "react-router-dom";
 
 const {Option} = Select;
 const formItemLayout = {
@@ -38,7 +39,7 @@ class AddOperatorCluster extends Component{
     componentDidMount() {
         this.loadUser();
         let initialPlanets = [];
-        fetch('http://localhost:8105/operatordetails')
+        fetch('http://localhost:8105/operators')
             .then(response => {
                 return response.json();
             }).then(data => {
@@ -56,6 +57,7 @@ class AddOperatorCluster extends Component{
         ApiService.fetchUserById(window.localStorage.getItem("clusterId"))
             .then((res) => {
                 let user = res.data.result;
+                try{
                 this.setState({
                     cluster_id: user.cluster_id,
                     cluster_name:user.cluster_name,
@@ -68,7 +70,8 @@ class AddOperatorCluster extends Component{
                     cluster_name:user.cluster_name,
                     cluster_type:user.cluster_type,
                     operator_ids:user.operator_ids,
-                })
+                })}
+                catch(err){console.log(err);}
             });
     }
 
@@ -82,6 +85,7 @@ class AddOperatorCluster extends Component{
     handleDropdownChangeOperatorId =(e) =>
     {
       this.setState({ operator_ids: e });
+    
     }
 
     onChangeradio = (e) =>{
@@ -133,13 +137,20 @@ class AddOperatorCluster extends Component{
             <div>
                 <div className='topline'>Add Operator List
                 </div>
+                <div className="setcrumb">
+                <Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
+                <Breadcrumb.Item key="operatorCluster">
+                    <NavLink to="/environmentSetup-operatorCluster">Operator CLuster</NavLink>
+                </Breadcrumb.Item>  
+                <Breadcrumb.Item>Add Operator Cluster</Breadcrumb.Item></div>
                 <div className="abc">
                     <div className="formalign">
                         <Form 
                         name="basic" 
                         initialValues={{remember:true}}
                         ref={this.formRef} 
-                        {...formItemLayout}>
+                        {...formItemLayout}
+                        onFinish={this.onFinish}>
                             <Form.Item 
                                 label = "Cluster Name"
                                 name = "cluster_name"
@@ -148,10 +159,16 @@ class AddOperatorCluster extends Component{
                                     required: true, 
                                     message: 'Please input your Cluster Name!',
                                     },
+                                    {
+                                        pattern:"[a-zA-Z]([a_zA-Z0-9_]*)+$",
+                                        message:"Cluster Name is invalid. It should start with an alphabet and only contain only alphabets, numbers and underscore",
+                                    },
+                                    
                                 ]}
                             >
                                 <Input 
                                     className="inputset"
+                                    maxLength="20"
                                     type="text" 
                                     placeholder = "Enter cluster name..."
                                     name="cluster_name"
@@ -194,6 +211,7 @@ class AddOperatorCluster extends Component{
                                     name="operator_ids"
                                     labelAlign="left"
                                     style={{ width: "300px" }}
+                                    // mode="multiple"
                                     placeholder="Click here and Please select the operator"
                                     onChange={this.handleDropdownChangeOperatorId}
                                     >

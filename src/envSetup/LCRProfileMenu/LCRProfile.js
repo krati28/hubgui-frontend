@@ -111,6 +111,7 @@ class LCRProfile extends Component{
               title: 'LCR ID',
               dataIndex: 'lcr_policy_id',
               key: 'lcr_policy_id',
+              width:100,
               sorter: (a, b) => a.lcr_policy_id - b.lcr_policy_id,
               sortOrder: sortedInfo.columnKey === 'lcr_policy_id' && sortedInfo.order,
               ellipsis: true,
@@ -119,6 +120,7 @@ class LCRProfile extends Component{
               title: 'LCR Name',
               dataIndex: 'lcr_name',
               key: 'lcr_name',
+              width:250,
               sorter: (a, b) => a.lcr_name.localeCompare(b.lcr_name),
               sortOrder: sortedInfo.columnKey === 'lcr_name' && sortedInfo.order,
               ellipsis: true,
@@ -127,6 +129,7 @@ class LCRProfile extends Component{
               title: 'LCR Type',
               dataIndex: 'lcr_type',
               key: 'lcr_type',
+              width:250,
               filters:[
                 {text:'Default LCR',value:"0"},
                 {text:'SC_MT',value:"1"},
@@ -141,6 +144,7 @@ class LCRProfile extends Component{
                 title: 'Edit',
                 dataIndex: 'edit',
                 key: 'key',
+                width:50,
                 render: (text, record) => <EditFilled 
                 onClick={() => { this.editLcr(record.lcr_policy_id);}}/>,
               },
@@ -148,6 +152,7 @@ class LCRProfile extends Component{
                 title: 'Delete',
                 dataIndex: 'delete',
                 key: 'delete',
+                width:50,
                 render: (text, record) =>
                 <Popconfirm
                   title="Are you sure delete this entry?"
@@ -201,6 +206,8 @@ class LCRProfile extends Component{
                   id="students" 
                   dataSource={this.state.lcrdetails} 
                   onChange={this.handleChange} 
+                  size="small"
+                  style={{width:1000}}
                 />
               </Form.Item>
             </Form>

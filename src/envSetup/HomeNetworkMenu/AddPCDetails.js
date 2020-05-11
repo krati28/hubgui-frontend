@@ -1,8 +1,9 @@
 
 import React, { Component } from 'react';
 import PCDService from "../../service/PCDService";
-import {Form, Input, Button, Select, Typography, Space, Popconfirm} from 'antd';
-
+import {Form, Input, Button, Select, Typography, Space, Popconfirm, InputNumber} from 'antd';
+import {NavLink} from "react-router-dom";
+import {Breadcrumb} from "antd";
 import '../../styling/Styletable.css';
 const {Option} = Select;
 const {Title} = Typography;
@@ -45,9 +46,10 @@ class AddPCDetails extends Component{
     }
     loadPcd() {
         PCDService.fetchPcdById(window.localStorage.getItem("ptcode_id"))
-       
             .then((res) => {
+        
                 let pcds = res.data.result;
+                try{
                 this.setState({
                 ptcode_id: pcds.ptcode_id,
                 point_code: pcds.point_code,
@@ -81,8 +83,6 @@ class AddPCDetails extends Component{
                     case 253:pcds.ssn="FNR";break;
                 }
                 
-
-            
                 this.formRef.current.setFieldsValue({
                     ptcode_id: pcds.ptcode_id,
                     point_code: pcds.point_code,
@@ -95,7 +95,10 @@ class AddPCDetails extends Component{
                     status: pcds.status,
                     delay:pcds.delay,
                 });
-            });
+            }
+            catch(err)
+                {console.log(err);}
+        });
             
     }
 
@@ -106,8 +109,9 @@ class AddPCDetails extends Component{
     
     
 
-    onChange = (e) =>
+    onChange = (e) =>{
         this.setState({ [e.target.name]: e.target.value });
+    }
     handleDropdownChangeNP =(e) =>
     {
         this.setState({ np:e });
@@ -121,13 +125,27 @@ class AddPCDetails extends Component{
     {
         this.setState({ status: e });
     }
-
+    handlepointcode=(e)=>{
+        this.setState({point_code:e})
+    }
+    handleSap=(e)=>{
+        this.setState({sap_id:e})
+    }
+    handlett=(e)=>{
+        this.setState({tt:e})
+    }
+    handledelay=(e)=>{
+        this.setState({delay:e})
+    }
         savePointCodeDetails = (e) => {
         e.preventDefault();
         if(this.state.ptcode_id===''){
-        let pcd= {ptcode_id:this.state.ptcode_id,point_code: (parseInt(this.state.point_code)), operator_name: this.state.operator_name,operator_country:this.state.operator_country,sap_id: (parseInt(this.state.sap_id)), tt: (parseInt(this.state.tt)),np:(parseInt(this.state.np)),ssn:(parseInt(this.state.ssn)),status:this.state.status,delay:parseInt(this.state.delay)};
+        let pcd= {ptcode_id:this.state.ptcode_id,point_code:this.state.point_code, 
+            operator_name: this.state.operator_name,operator_country:this.state.operator_country,
+            sap_id:this.state.sap_id, tt:this.state.tt,np:(parseInt(this.state.np)),ssn:(parseInt(this.state.ssn)),
+            status:this.state.status,delay:this.state.delay};
         
-                //alert("in add pcd");
+                
         PCDService.addPcd(pcd)
             .then(res => {
                 this.setState({message : 'added successfully.'});
@@ -135,7 +153,7 @@ class AddPCDetails extends Component{
                 this.props.history.push('/listpcd');
             });}
             else if(this.state.ptcode_id !== ''){
-                let pcd= {ptcode_id:this.state.ptcode_id,point_code: (parseInt(this.state.point_code)), operator_name: this.state.operator_name,operator_country:this.state.operator_country,sap_id: (parseInt(this.state.sap_id)), tt: (parseInt(this.state.tt)),np:(parseInt(this.state.np)),ssn:(parseInt(this.state.ssn)),status:this.state.status,delay:parseInt(this.state.delay)};
+                let pcd= {ptcode_id:this.state.ptcode_id,point_code:this.state.point_code, operator_name: this.state.operator_name,operator_country:this.state.operator_country,sap_id: (parseInt(this.state.sap_id)), tt: (parseInt(this.state.tt)),np:(parseInt(this.state.np)),ssn:(parseInt(this.state.ssn)),status:this.state.status,delay:parseInt(this.state.delay)};
         
                 //alert("in editpcd")
                 PCDService.editPcd(pcd)
@@ -151,8 +169,14 @@ class AddPCDetails extends Component{
               
         return(
             <div >
-                
-              <div className='topline'>Add Point Code Details</div>
+                <div className='topline'>Add Point Code Details</div>
+                <div className="setcrumb">
+                <Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
+                <Breadcrumb.Item key="homenetwork">
+                    <NavLink to="/environmentSetup-homenetwork">Home Network</NavLink>
+                </Breadcrumb.Item>  
+                <Breadcrumb.Item>Add Point Code Details</Breadcrumb.Item>
+                </div>
               <div className="abc">
                 <div className="formalign">
                 <Form name="basic"  ref={this.formRef}
@@ -164,17 +188,17 @@ class AddPCDetails extends Component{
                 labelAlign="left"
                 rules = {[{ 
                             required: true, 
-                            message: 'Please point code value',
+                            message: 'Please enter point code value',
                         },
+                        {type:"number",min:0,message:"Please enter valid positive number"}
                         ]} 
                 >
-                    <Input 
-                        type="text"
+                    <InputNumber
                         className="inputset"
                         name="point_code" 
                         labelAlign="left" 
                         value={this.state.point_code} 
-                        onChange={this.onChange} 
+                        onChange={this.handlepointcode} 
                     />
                 </Form.Item>
                 <Form.Item 
@@ -185,6 +209,10 @@ class AddPCDetails extends Component{
                             required: true, 
                             message: 'Please operator Name!',
                         },
+                        {
+                            pattern:"^([A-Za-z])(\\s*)([A-Za-z0-9\\_\\-\\s]*)$",
+                            message:"Only alphanumeric character underscore and space are allowed for Operator Name"
+                        }
                     ]} 
                 >
                     <Input 
@@ -205,6 +233,10 @@ class AddPCDetails extends Component{
                             required: true, 
                             message: 'Please input operator country',
                         },
+                        {
+                            pattern:"^([A-Za-z])(\\s*)([A-Za-z\\_\\-\\s]*)$",
+                            message:"Only alphabetic character underscore and space are allowed for Operator Country"
+                        }
                     ]}
                 >
                     <Input 
@@ -222,32 +254,44 @@ class AddPCDetails extends Component{
                 name = "sap_id"
                 labelAlign="left"
                 rules = {[{ 
-                            required: true}
+                            required: true,
+                            message:"Please enter SAP Id"
+                        },
+                        {
+                            type:"number",
+                            min:0,
+                            max:255,
+                            message:"SAP Id value should be between 0 to 255"
+                        }
                     ]} 
                 >
-                    <Input 
-                        type="text"
+                    <InputNumber
                         className="inputset"
                         name="sap_id" 
                         labelAlign="left" 
                         value={this.state.sap_id} 
-                        onChange={this.onChange} 
+                        onChange={this.handleSap} 
                     />
                 </Form.Item>
                 
                 <Form.Item 
                 label = "TT"
                 name = "tt"
-                rules = {[{ required: true}]} 
+                rules = {[{ 
+                        required: true,
+                        message:"Please enter TT value"}, 
+                        {type: "number",
+                        min:0,
+                        max:255, 
+                        meesage:"TT value should be between 0 to 255"
+                }]} 
                 labelAlign="left">
            
-                    <Input 
-                        type="text" 
+                    <InputNumber 
                         className="inputset"
-                        name="tt" 
                         labelAlign="left" 
                         value={this.state.tt} 
-                        onChange={this.onChange} 
+                        onChange={this.handlett} 
                     />
                 </Form.Item>
                 
@@ -292,15 +336,24 @@ class AddPCDetails extends Component{
                 <Form.Item 
                 label = "Delay"
                 name = "delay"
-                rules = {[{ required: true}]} 
+                rules = {[{ 
+                            required: true,
+                            message:"Please enter Delay"
+                        },
+                        {
+                            type:"number",
+                            min:0,
+                            message:"Only positive values are accpted for Delay"
+                        }
+                    ]} 
                 labelAlign="left">
-                    <Input 
+                    <InputNumber 
                         type="text" 
                         className="inputset"
                         name="delay" 
                         labelAlign="left" 
                         value={this.state.delay} 
-                        onChange={this.onChange} 
+                        onChange={this.handledelay} 
                     />
                 </Form.Item>
                     
@@ -317,7 +370,8 @@ class AddPCDetails extends Component{
                     type="primary" 
                     //onClick={this.savePointCodeDetails} 
                     disabled={!this.state.point_code 
-                    || !this.state.operator_name || !this.state.operator_country || !this.state.sap_id ||!this.state.tt||!this.state.np
+                    || !this.state.operator_name || !this.state.operator_country ||
+                    !this.state.sap_id ||!this.state.tt||!this.state.np
                     ||!this.state.ssn||!this.state.status ||!this.state.delay} 
                     >Save
                     </Button>
@@ -347,12 +401,13 @@ class AddPCDetails extends Component{
                     </Space>
                     </Form.Item>
                 </div>
-        </Form>
+            </Form>
             </div>
-            </div>
-            </div>
+        </div>
+        </div>
         );
     }
 }
 
 export default  AddPCDetails;
+

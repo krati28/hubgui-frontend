@@ -4,7 +4,7 @@ import ApiService from "../../service/ApiService";
 import { Table, Button } from 'antd';
 import {  EditFilled , DeleteFilled , PlusCircleFilled, AlignCenterOutlined , SearchOutlined} from '@ant-design/icons';
 import 'antd/dist/antd.css';
-import { Form, Input, Popconfirm, Space} from 'antd';
+import { Form, Input, Popconfirm, Space, Breadcrumb} from 'antd';
 import '../../styling/Styletable.css';
 // import { SearchOutlined } from '@ant-design/icons';
 
@@ -20,7 +20,67 @@ class OperatorCluster extends Component{
             searchedColumn: '',
         filteredInfo: null,
             sortedInfo: null,
-            message: null
+            message: null,
+            columns : [
+                {
+                    title: 'Cluster Id',
+                    dataIndex: 'cluster_id',
+                    key: 'cluster_id',
+                    width:100,
+                    ...this.getColumnSearchProps('cluster_id'),
+                    sorter: (a, b) => a.cluster_id - b.cluster_id,
+                    // sortOrder: sortedInfo.columnKey === 'cluster_id' && sortedInfo.order,
+                    ellipsis: true,
+                },
+                {
+                    title: 'Cluster Name',
+                    dataIndex: 'cluster_name',
+                    key: 'cluster_name',
+                    width:250,
+                    ...this.getColumnSearchProps('cluster_name'),
+                    sorter: (a, b) => a.cluster_name.localeCompare(b.cluster_name),
+                    // sortOrder: sortedInfo.columnKey === 'cluster_name' && sortedInfo.order,
+                    ellipsis: true,
+                },
+                {
+                    title: 'Cluster Type',
+                    dataIndex: 'cluster_type',
+                    key: 'cluster_type',   
+                    width:250,
+                     filters:[
+                        {text:'Default',value:1},
+                        {text:'Roaming',value:2},
+                    ],   
+        
+                    render :cluster_type =>this.mapclustertype(cluster_type),
+                    
+                    // filteredValue: filteredInfo.cluster_type || null,
+                    onFilter: (value, record) => record.cluster_type===value,
+                },
+                {
+                    title: 'Edit',
+                    dataIndex: 'edit',
+                    key: 'edit',
+                    width:50,
+                    render: (text, record) => <EditFilled 
+                    onClick={() => { this.editUser(record.cluster_id);}}/>,
+                },
+                {
+                    title: 'Delete',
+                    dataIndex: 'delete',
+                    key: 'delete',
+                    width:50,
+                    render: (text, record) => <Popconfirm
+                    title="Are you sure delete this entry?"
+                    onConfirm={this.deleteUser.bind(this,record.cluster_id)}
+                    onCancel={this.cancel}
+                    okText="Yes"
+                    cancelText="No"
+                  ><DeleteFilled 
+                  />
+                  </Popconfirm> ,
+                }
+            ]
         }
         // this.deleteUser = this.deleteUser.bind(this);
         this.editUser = this.editUser.bind(this);
@@ -132,17 +192,6 @@ class OperatorCluster extends Component{
             setTimeout(() => this.searchInput.select());
           }
         },
-        // render: text =>
-        //   this.state.searchedColumn === dataIndex ? (
-        //     <Highlighter
-        //       highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-        //       searchWords={[this.state.searchText]}
-        //       autoEscape
-        //       textToHighlight={text.toString()}
-        //     />
-        //   ) : (
-        //     text
-        //   ),
       });
     
       handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -158,70 +207,42 @@ class OperatorCluster extends Component{
         this.setState({ searchText: '' });
       };
     
+      
+  handleResize = index => (e, { size }) => {
+    this.setState(({ columns }) => {
+      const nextColumns = [...columns];
+      nextColumns[index] = {
+        ...nextColumns[index],
+        width: size.width,
+      };
+      return { columns: nextColumns };
+    });
+  };
     
     render(){
+        
+    const columns = this.state.columns.map((col, index) => ({
+        ...col,
+        onHeaderCell: column => ({
+          width: column.width,
+          onResize: this.handleResize(index),
+        }),
+      }));
         let { sortedInfo, filteredInfo } = this.state;
         sortedInfo = sortedInfo || {};
         filteredInfo = filteredInfo || {};
-        const columns = [
-            {
-                title: 'Cluster Id',
-                dataIndex: 'cluster_id',
-                key: 'cluster_id',
-                // ...this.getColumnSearchProps('cluster_id'),
-                sorter: (a, b) => a.cluster_id - b.cluster_id,
-                sortOrder: sortedInfo.columnKey === 'cluster_id' && sortedInfo.order,
-                ellipsis: true,
-            },
-            {
-                title: 'Cluster Name',
-                dataIndex: 'cluster_name',
-                key: 'cluster_name',
-                // ...this.getColumnSearchProps('cluster_name'),
-                sorter: (a, b) => a.cluster_name.localeCompare(b.cluster_name),
-                sortOrder: sortedInfo.columnKey === 'cluster_name' && sortedInfo.order,
-                ellipsis: true,
-            },
-            {
-                title: 'Cluster Type',
-                dataIndex: 'cluster_type',
-                key: 'cluster_type',   
-                 filters:[
-                    {text:'Default',value:1},
-                    {text:'Roaming',value:2},
-                ],   
-    
-                render :cluster_type =>this.mapclustertype(cluster_type),
-                
-                filteredValue: filteredInfo.cluster_type || null,
-                onFilter: (value, record) => record.cluster_type===value,
-            },
-            {
-                title: 'Edit',
-                dataIndex: 'edit',
-                key: 'edit',
-                render: (text, record) => <EditFilled 
-                onClick={() => { this.editUser(record.cluster_id);}}/>,
-            },
-            {
-                title: 'Delete',
-                dataIndex: 'delete',
-                key: 'delete',
-                render: (text, record) => <Popconfirm
-                title="Are you sure delete this entry?"
-                onConfirm={this.deleteUser.bind(this,record.cluster_id)}
-                onCancel={this.cancel}
-                okText="Yes"
-                cancelText="No"
-              ><DeleteFilled 
-              />
-              </Popconfirm> ,
-            }
-        ];
+        
         return(
             <div>
                 <div className='topline'>Operator List</div>
+                <div className='setcrumb'>
+                    
+<Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
+                <Breadcrumb.Item key="pathDetails">Operator Cluster
+                </Breadcrumb.Item>  
+                </div>
                 <Form className='formset' >
+                    
                     <Form.Item>
                         <div className="highlight">
                         <Button type="primary" onClick={() => this.addUser()}>Add
@@ -243,7 +264,7 @@ class OperatorCluster extends Component{
                         <Radio value={2}>Cluster Id</Radio>
                     </Radio.Group>
                     </Form.Item> */}
-
+                    <center>
                     <Form.Item>
                         <Table
                             columns={columns} 
@@ -254,6 +275,7 @@ class OperatorCluster extends Component{
                             size="small"
                             style={{width:1000}} />
                     </Form.Item>
+                    </center>
                 </Form>
             </div>
         );

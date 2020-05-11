@@ -57,7 +57,17 @@
 /*sets the margins for form*/
 .formset{
   margin-top: 20px;
-  margin-left: 20px
+  margin-left: 20px;
+}
+
+/*set breadcrumb*/
+.setcrumb{
+  margin-left:20px;
+}
+
+/*sets add button*/
+.add{
+  margin-left: 100px;
 }
 
 /*sets the div of lcr Profile*/
@@ -121,6 +131,7 @@
 
 .highlight{
   width: 50px;
+  margin-left: 150px;
   box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 

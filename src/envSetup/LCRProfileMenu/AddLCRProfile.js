@@ -183,11 +183,16 @@ class AddLCRProfile extends Component{
                                     required: true, 
                                     message: 'Please input your Cluster Name!',
                                     },
+                                    {
+                                        pattern:"[a-zA-Z]([a_zA-Z0-9_]*)+$",
+                                        message:"Cluster Name is invalid. It should only contain only alphabetss, numbers and underscore",
+                                    },
                                 ]}
                             >
                                 <Input 
                                     type="text" 
                                     className="inputset"
+                                    maxLength="30"
                                     placeholder = "Enter lcr name..."
                                     name="lcr_name"
                                     labelAlign="left"

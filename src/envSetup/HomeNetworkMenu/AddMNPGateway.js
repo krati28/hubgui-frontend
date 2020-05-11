@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import MNPService from "../../service/MNPService"
 import history from "../../History";
-import {Form, Input, Button, Select, Typography, Table, Space, Popconfirm} from 'antd';
-import Column from 'antd/lib/table/Column';
+import {Form, Input,InputNumber, Button, Select, Typography, Row,Col, Space, Popconfirm} from 'antd';
+import {NavLink} from 'react-router-dom';
+import {Breadcrumb} from "antd";
 import '../../styling/Styletable.css';
-import { SlidersTwoTone } from '@ant-design/icons';
+import {PlusOutlined,MinusCircleOutlined} from "@ant-design/icons";
+
 const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -16,7 +18,7 @@ const formItemLayout = {
     }
   };
 const {Option} = Select;
-const {Title} = Typography;
+
 class AddMNPGateway extends Component{
     constructor(props){
         super(props);
@@ -36,9 +38,10 @@ class AddMNPGateway extends Component{
             zone:'',
             ttl_override:'',
             list:[],
-           //addnode:'',
-           button_submit:true,
-           button_update:false,
+            host:'',
+            port:'',noconn:'',fail:'',retries:'',conntype:'',
+            nodes:[],
+            node:{},
             message: null
         }
         this.saveMNP = this.saveMNP.bind(this);
@@ -46,10 +49,10 @@ class AddMNPGateway extends Component{
         this.handleLBMode = this.handleLBMode.bind(this);
         this.handleGatewayType = this.handleGatewayType .bind(this);
         this.handlecache=this.handlecache.bind(this);
+        this.handleConnectiontype=this.handleConnectiontype.bind(this);
         this.formRef = React.createRef();
-        this.loadmnp=this.loadmnp.bind(this);
-        this.Createrow=this.Createrow.bind(this);
-        this.Deleterow=this.Deleterow.bind(this);
+        //this.loadmnp=this.loadmnp.bind(this);
+        //this.nodeinput=this.nodeinput.bind(this);
     }
 
     componentDidMount() {
@@ -59,16 +62,15 @@ class AddMNPGateway extends Component{
                  .then(response => {
                      return response.json();
                  }).then(data => {
-                     //alert(JSON.stringify(data));
+                    //alert(JSON.stringify(data));
                  initialPlanets = data.result.map((gateway_name) => {
-                    
-                     return gateway_name
-                     
-                 });
+                    return gateway_name
+                  });
                  this.setState({
                      list: initialPlanets,
                  });
-                
+
+                 //alert(JSON.stringify(this.state.list));
              });
     }
     loadmnp() {
@@ -77,8 +79,14 @@ class AddMNPGateway extends Component{
         
             .then((res) => {
                 let mnps = res.data.result;
+                try{
                 var c=JSON.parse(mnps.config)
+                var node_edit=c["nodes"];
+                var node_json=JSON.stringify(node_edit);
+                var node_parse=JSON.parse(node_json)
+                //alert(node_parse["host"]);
                 this.handleDropdownChangeMNPGateway(mnps.mnp_type);
+                
                 this.setState({
                     mnp_id:mnps.mnp_id,
                     mnp_type:mnps.mnp_type,
@@ -90,6 +98,12 @@ class AddMNPGateway extends Component{
                     gateway_type:c["gateway_type"],
                     zone:c["zone"],
                     ttl_override:c["ttl_override"],
+                    host:node_parse["host"],
+                    port:node_parse["port"],
+                    noconn:node_parse["noconn"],
+                    fail:node_parse["fail"],
+                    retries:node_parse["retries"],
+                    conntype:node_parse["conntype"]
                 }, () => console.log(this.state));
                 
                 this.formRef.current.setFieldsValue({
@@ -102,7 +116,15 @@ class AddMNPGateway extends Component{
                     gateway_type:c["gateway_type"],
                     zone:c["zone"],
                     ttl_override:c["ttl_override"],
+                    host:node_parse["host"],
+                    port:node_parse["port"],
+                    noconn:node_parse["noconn"],
+                    fail:node_parse["fail"],
+                    retries:node_parse["retries"],
+                    conntype:node_parse["conntype"]
                 });
+              }
+              catch(err){console.log(err);}
             });
             
     }
@@ -116,24 +138,29 @@ class AddMNPGateway extends Component{
     onChange = (e) =>{
         this.setState({ [e.target.name]: e.target.value });
         this.setState({config:{[e.target.name]: e.target.value}});
-        
+        this.setState( {node:{[e.target.name]: e.target.value}});
     }
+    
+    handleConnectiontype=(e)=>{
+        this.setState({conntype:e})
+    }
+    // nodeinput=(e)=>{
+    //     //const { node } = this.state;
+    //     this.setState({
+    //       nodes: [{
+    //         //...node,
+    //         [e.target.name]: e.target.value
+    //       }]
+          
+    //     });//alert({[e.target.name]: e.target.value})
+    //   };
+       
+    
     enablenode =()=>{
         // alert("display tabel")
         this.setState({shownode:true})
     }
-    Createrow=()=>{
-        alert("in cre row");
-        var table = document.getElementById("node_table");
-        var rows = table.getElementsByTagName("tr");
-        var r=parseInt(rows)+1;
-        table.insertRow(parseInt(r));
-    }
-    Deleterow=()=>{
-        var table = document.getElementById("node_table");
-        var rows = table.getElementsByTagName("tr");
-        table.deleteRow(parseInt(rows)-1);
-    }
+    
     handleDropdownChangeMNPGateway  =(e) =>
     {
         this.setState({ mnp_type: e });
@@ -168,15 +195,38 @@ class AddMNPGateway extends Component{
     {
         this.setState({ gateway_type: ee });
     }
+    handleMaxtrans=(e)=>{
+        if((isNaN(e))||(e==="NULL"))
+        {
+            this.setState({max_trans:""})
+        }
+        else {
+            var x=String(e);
+            this.setState({max_trans:x})}
+       
+    }
+    
+    handleOverride=(e)=>{
+        if((isNaN(e))||(e==="NULL"))
+        {
+            this.setState({ttl_override:""})
+        }
+        else {
+            var x=String(e);
+            this.setState({ttl_override:x})}
+    }
 
     saveMNP= (e) => {
             e.preventDefault();
+            //alert(this.formRef.nodeslist.length());
+            //console.log("reseverd values"+this.state.nodes);
             if(this.state.mnp_id===''){
             var mnp= {mnp_id:this.state.mnp_id,mnp_type:this.state.mnp_type, gateway_name: this.state.gateway_name,
                 max_trans:this.state.max_trans,lbmode: this.state.lbmode,zone:this.state.zone,ttl_override:this.state.value,
-                config:JSON.stringify({"gwname":this.state.gateway_name,"gwtype":this.state.mnp_type,"zone":this.state.zone,
-                "max_trans":this.state.max_trans,"lbmode":this.state.lbmode,"cache_name":this.state.cache_name,
-                "ttl_override":this.state.ttl_override || 86400}),cache_name:this.state.cache_name || "NULL"
+                config:JSON.stringify({"gwname":this.state.gateway_name,"gwtype":this.state.mnp_type,
+                "zone":this.state.zone,"max_trans":this.state.max_trans,"lbmode":this.state.lbmode,"cache_name":this.state.cache_name,
+                "ttl_override":this.state.ttl_override|| "86400","flags":"cond_bypass","nodes":{"host":this.state.host,"port":this.state.port,"noconn":this.state.noconn,"fail":this.state.fail,
+                "retries":this.state.retries,"conntype":this.state.conntype}}),cache_name:this.state.cache_name || "NULL"
             }
                
             
@@ -192,7 +242,8 @@ class AddMNPGateway extends Component{
                 max_trans:this.state.max_trans,lbmode: this.state.lbmode,zone:this.state.zone,ttl_override:this.state.value,
                 config:JSON.stringify({"gwname":this.state.gateway_name,"gwtype":this.state.mnp_type,"zone":this.state.zone,
                 "max_trans":this.state.max_trans,"lbmode":this.state.lbmode,"cache_name":this.state.cache_name,
-                "ttl_override":this.state.ttl_override}),cache_name:this.state.cache_name
+                "ttl_override":this.state.ttl_override||"86400","flags":"cond_bypass","nodes":{"host":this.state.host,"port":this.state.port,"noconn":this.state.noconn,"fail":this.state.fail,
+                "retries":this.state.retries,"conntype":this.state.conntype}}),cache_name:this.state.cache_name
             }
                
            
@@ -208,9 +259,15 @@ class AddMNPGateway extends Component{
     render() {
         return(
             <div >
-                
-              <div className='topline'>Add MNP Gateway</div>
-              <div className="abc">
+                <div className='topline'>Add MNP Gateway</div>
+                <div className="setcrumb">
+                <Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
+                <Breadcrumb.Item key="homenetwork">
+                    <NavLink to="/environmentSetup-homenetwork">Home Network</NavLink>
+                </Breadcrumb.Item>  
+                <Breadcrumb.Item>Add MNP Gateway</Breadcrumb.Item>
+                </div>
+                <div className="abc">
                 <div className="formalign">
                 <Form name="basic" ref={this.formRef} 
                 initialValues={{ remember: true }}
@@ -219,7 +276,7 @@ class AddMNPGateway extends Component{
                 label = "MNP Gateway" 
                 name = "mnp_type" 
                 labelAlign="left"
-                rules = {[{required:true}]} >
+                rules = {[{required:true,message:"Please enter MNP Gateway"}]} >
                 <Select placeholder="--select--" onChange={this.handleDropdownChangeMNPGateway}
                 labelAlign="left" style={{width:"300px"}}>
                     <Option value="Redis">Redis</Option>
@@ -231,7 +288,8 @@ class AddMNPGateway extends Component{
                 label = "Gateway Name"
                 name = "gateway_name" 
                 labelAlign="left"
-                rules = {[{ required: true,message: 'Please enter gateway name',},]}>
+                rules = {[{ required: true,message: 'Please enter a Gateway Name'},
+                {pattern:"^([A-Za-z])(\s*)([A-Za-z0-9\_\-\s]*)$",message:"Only alphabetic character underscore and space are allowed for Gateway Name"}]}>
                     <Input 
                         type="text" 
                         className="inputset"
@@ -245,28 +303,31 @@ class AddMNPGateway extends Component{
                 <Form.Item 
                 label = "Zone"
                 name = "zone" 
-                labelAlign="left">
-                    <Input 
+                labelAlign="left"
+                
+                >
+                    <Input
                         type="text"
                         className="inputset"
                         name="zone" 
                         labelAlign="left" 
                         value={this.state.zone} 
-                        onChange={this.onChange} 
+                        onChange={this.handleZone} 
                     />
                 </Form.Item>
                 }
                 <Form.Item 
                 label = "Max Pending Transactions"
                 name = "max_trans" 
-                labelAlign="left">
-                    <Input 
-                        type="text" 
+                labelAlign="left"
+                rules ={[{type:"number",message:"Only Numerical values allowed"}]}>
+                    <InputNumber 
                         className="inputset" 
                         name="max_trans" 
                         labelAlign="left" 
+                    
                         value={this.state.max_trans} 
-                        onChange={this.onChange} 
+                        onChange={this.handleMaxtrans} 
                     />
                 </Form.Item>
                 
@@ -301,57 +362,130 @@ class AddMNPGateway extends Component{
                 <Form.Item 
                 label="TTL Ovverride"
                 name = "ttl_override" 
-                labelAlign="left">
-                    <Input 
+                labelAlign="left"
+                rules ={[{type:"number",message:"Only numeric values allowed"}]}
+                >
+                    <InputNumber
                         type="text"
                         className="inputset"
                         name="ttl_override" 
                         labelAlign="left" 
-                        defaultValue="86400" 
-                        onChange={this.onChange} 
+                        defaultValue={86400} 
+                        onChange={this.handleOverride} 
                     />
                 </Form.Item>
                 }
-                <Form.Item 
-                label="Add Node"
-                name = "node" 
-                labelAlign="left">
-                <Button type="default" onClick={this.enablenode}>Add Node</Button>
-                </Form.Item>
-                {this.state.shownode&&
-                    <Form.Item>
-                    <table id="node_table">
-                        <tr>
-                        <th>Host</th>
-                        <th>Port</th>
-                        <th>No. of Connections</th>
-                        <th>Fail Threshold</th>
-                        <th>Retries</th>
-                        <th>Connection Type</th>
-                        </tr>
-                        <tr>
-                        <td><Input type="text" name="host" value={this.state.host} onChange={this.onChange}/></td>
-                        <td><Input type="text" name="port" value={this.state.port} onChange={this.onChange}/></td>
-                        <td><Input type="text" name="conn" value={this.state.conn} onChange={this.onChange}/></td>
-                        <td><Input type="text" name="fail_threshold" value={this.state.fail_threshold} onChange={this.onChange}/></td>
-                        <td><Input type="text" name="retries" value={this.state.fail_retries} onChange={this.onChange}/></td>
-                        <td><Select placeholder="--select--" >
-                        <Option value="TCP">TCP</Option>
-                        <Option value="UDP">UDP</Option>
-                            </Select> </td>
-                        <td>
-                        <Form.Item>
-                        <Button type="default" onclick={this.Createrow}>Create row</Button>
-                        <Button type="default" onclick={this.Deleterow}>Delete row</Button>
-                        </Form.Item>
-                        </td>
-                        </tr>
-                    </table>
-                    </Form.Item>
+                <Form.List name="node" ref={this.formRef} >
+                  {(fields, { add, remove }) => {
+                    return (
+                      <div>
+                        <Form.Item
+                            label="Add Node"
+                            name = "node" 
+                            labelAlign="left"
+                            // rules={[{required:true,message:"Add atleast one node"}]}
+                            >
+                            <Button
+                              type="dashed"
+                              onClick={() => {
+                                add();
+                              }}
+                              style={{ width: "auto" }}
+                            >
+                              <PlusOutlined /> Add Node
+                            </Button>
+                          </Form.Item>
+                          {fields.map((field, index) => (
+                            //   <div className="divnode">
+                            <Row key={field.key}>
+                              <Col>
+                                <Form.Item
+                                  name={[field.name, "host"]}
+                                  fieldKey={[field.fieldKey, "host"]}
+                                  rules={[{require:true},
+                                          {pattern:"^(([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)\.){3}([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)$",
+                                          message:"Please enter a valid host address "}]}
+                                >
+                                  <Input placeholder="HOST" name="host" value={this.state.host} onChange={this.onChange}/>
+                                </Form.Item>
+                              </Col>
+                              <Col>
+                                <Form.Item
+                                  name={[field.name, "port"]}
+                                  fieldKey={[field.fieldKey, "port"]}
+                                  rules={[{require:true},
+                                          {pattern:"^[0-9]*$",
+                                          message:"Please enter valid number"}]}
+                                >
+                                  <Input placeholder="PORT" name="port" value={this.state.port} onChange={this.onChange}/>
+                                </Form.Item>
+                              </Col>
+                              <Col>
+                                <Form.Item
+                                  name={[field.name, "noconn"]}
+                                  fieldKey={[field.fieldKey, "noconn"]}
+                                  rules={[{require:true},
+                                          {pattern:"^[0-9]*$",
+                                          message:"Please enter valid number"}]}
+                                >
+                                  <Input placeholder="No.of Connections" name="noconn" value={this.state.noconn} onChange={this.onChange}/>
+                                </Form.Item>
+                              </Col>
+                              <Col>
+                                <Form.Item
+                                  name={[field.name, "fail"]}
+                                  fieldKey={[field.fieldKey, "fail"]}
+                                  rules={[{require:true},
+                                          {pattern:"^[0-9]*$",
+                                          message:"Please enter valid number"}]}
+                                >
+                                  <Input placeholder="Fail Threshold" name="fail" value={this.state.fail} onChange={this.onChange}/>
+                                </Form.Item>
+                              </Col>
+                              <Col>
+                                <Form.Item
+                                  name={[field.name, "retries"]}
+                                  fieldKey={[field.fieldKey, "retries"]}
+                                  rules={[{require:true},
+                                          {pattern:"^[0-9]*$",
+                                          message:"Please enter valid number"}]}
+                                >
+                                  <Input placeholder="Retries" name="retries" value={this.state.retries} onChange={this.onChange}/>
+                                </Form.Item>
+                              </Col>
+                              <Col>
+                                <Form.Item
+                                  name={[field.name, "conntype"]}
+                                  fieldKey={[field.fieldKey, "conntype"]}
+                                  rules={[{require:true}]}
+                                >
+                                  <Select placeholder="-select-" onChange={this.handleConnectiontype}
+                                  labelAlign="left" style={{width:"300px"}}>
+                                    <Option value="TCP">TCP</Option>
+                                    <Option value="UDP">UDP</Option>
+                                    </Select> 
+                                </Form.Item>
+                              </Col>
+
+                              <Col flex="none">
+                                <MinusCircleOutlined
+                                  className="dynamic-delete-button"
+                                  onClick={() => {
+                                    remove(field.name);
+                                  }}
+                                />
+                              </Col>
+                            </Row>
+                            // </div>
+                          ))}
+                          
+                        </div>
+                      );
+                    }}
                     
-                }
-               
-               <div className="buttonset">   
+                  </Form.List>
+                    
+                <div className="buttonset">   
                 <Form.Item > 
                 <Space>
                 <Popconfirm
@@ -364,7 +498,7 @@ class AddMNPGateway extends Component{
                     type="primary" 
                     //onClick={this.saveMNP} 
                     disabled={!this.state.mnp_type || 
-                    !this.state.gateway_name} 
+                    !this.state.gateway_name ||!this.state.node}
                 >Save</Button>
                 </Popconfirm>
                 <Popconfirm
@@ -393,12 +527,13 @@ class AddMNPGateway extends Component{
                 </Form.Item>
                 </div>
                 </Form>
+              </div>
             </div>
-            </div>
-            </div>
+          </div>
         );
     }
 }
 
 export default  AddMNPGateway;
+
 
