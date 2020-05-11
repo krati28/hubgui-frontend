@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Form, Table, Popconfirm} from 'antd';
-import {EditFilled, DeleteFilled} from '@ant-design/icons'
+import { Button, Form, Table, Popconfirm, Breadcrumb, Input, Space} from 'antd';
+import {  EditFilled , DeleteFilled, SearchOutlined} from '@ant-design/icons';
 import history from '../../History';
 import '../../styling/Styletable.css';
 import DealService from '../../service/DealService';
@@ -11,7 +11,94 @@ class DealManagement extends Component{
         super();
         this.state={
             deals:[],
-            message:null
+            message:null,
+            searchText: '',
+            searchedColumn: '',
+            filteredInfo: null,
+            sortedInfo: null,
+
+            columns : [
+                {
+                    title: 'Deal Id',
+                    dataIndex: 'id',
+                    key: 'id',
+                    width:120,
+                    sorter: (a,b) => a.id - b.id,
+                    ...this.getColumnSearchProps('id'),
+                    ellipsis: true,
+                },
+                {
+                    title: 'Deal Name',
+                    dataIndex: 'name',
+                    key: 'name',
+                    width:200,
+                    sorter: (a, b) => a.name.localeCompare(b.name),
+                    ...this.getColumnSearchProps('name'),
+                    ellipsis: true,
+                },
+                {
+                    title: 'Deal Rate',
+                    dataIndex: 'rate',
+                    key: 'rate',
+                    width:100,
+                    sorter: (a, b) => a.rate.localeCompare(b.rate),
+                    ellipsis: true,
+                },
+                {
+                    title: 'Deal Type',
+                    dataIndex: 'type',
+                    key: 'type',
+                    filters:[
+                        {text:"Customer",value:2},
+                        {text:"Supplier", value:3},
+                        {text:"Source Operator", value:4},
+                        {text:"Source Country", value:5},
+                        {text:"Customer and Destination Country",value:6},
+                        {text:"Customer and Destination Operator", value:7},
+                        {text:"Supplier and Destination Country", value:8},
+                        {text:"Supplier and Destination Operator", value:9}
+                    ],
+                    onFilter: (value, record) => record.options===value,
+                    render: type => this.mapDealtype(type),
+                    ellipsis: true,
+                },
+                {
+                    title: 'Deal Option',
+                    dataIndex: 'options',
+                    key: 'options',
+                    width:150,
+                    filters:[
+                        {text:"Revenue Based",value:1},
+                        {text:"Cost Based",value:2},
+                        {text:"Volume Based", value:3}
+                    ], 
+                    onFilter: (value, record) => record.options===value,
+                    render: options => this.mapDealOption(options),
+                        ellipsis: true,
+                },
+                {
+                    title: 'Edit',
+                    dataIndex: 'edit',
+                    key: 'edit',
+                    width:80,
+                    render: (text,record) => <EditFilled onClick={() => this.editDeal(record.id)}/>, 
+                },
+                {
+                    title: 'Delete',
+                    dataIndex: 'delete',
+                    key: 'delete',
+                    width:100,
+                    render: (text, record) => 
+                        <Popconfirm
+                            title="Are you sure delete this entry?"
+                            onConfirm = {this.deleteDeal.bind(this,record.id) }
+                            okText="Yes"
+                            cancelText="No"
+                        >
+                            <DeleteFilled/> 
+                        </Popconfirm>,
+                }
+            ]
         }
         this.reloadDealList = this.reloadDealList.bind(this);
         this.editDeal = this.editDeal.bind(this);
@@ -48,6 +135,7 @@ class DealManagement extends Component{
         window.localStorage.removeItem("id");
         this.props.history.push('/add-deal');
     }
+
     state = {
         sortedInfo: null,
     };
@@ -56,6 +144,15 @@ class DealManagement extends Component{
         console.log('Various parameters', pagination, filters, sorter);
         this.setState({
             sortedInfo: sorter,
+        });
+    };
+            
+    setAgeSort = () => {
+        this.setState({
+            sortedInfo: {
+                order: 'descend',
+                columnKey: 'age',
+            },
         });
     };
 
@@ -88,6 +185,7 @@ class DealManagement extends Component{
         }
         return dealtype;
     }
+
     mapDealOption = (option) =>{
         switch(option){
             case 1: option="Revenue Based";
@@ -100,85 +198,100 @@ class DealManagement extends Component{
         return option;
     }
 
+    getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys,
+           selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Input
+              ref={node => {
+                this.searchInput = node;
+              }}
+              placeholder={`Search ${dataIndex}`}
+              value={selectedKeys[0]}
+              onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+              style={{ width: 188, marginBottom: 8, display: 'block' }}
+            />
+            <Space>
+              <Button
+                type="primary"
+                onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+                icon={<SearchOutlined />}
+                size="small"
+                style={{ width: 90 }}
+              >
+                Search
+              </Button>
+              <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                Reset
+              </Button>
+            </Space>
+          </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        onFilter: (value, record) =>
+          record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownVisibleChange: visible => {
+          if (visible) {
+            setTimeout(() => this.searchInput.select());
+          }
+        },
+      });
+    
+      handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        this.setState({
+          searchText: selectedKeys[0],
+          searchedColumn: dataIndex,
+        });
+      };
+    
+      handleReset = clearFilters => {
+        clearFilters();
+        this.setState({ searchText: '' });
+      };
+    
+      
+    handleResize = index => (e, { size }) => {
+        this.setState(({ columns }) => {
+        const nextColumns = [...columns];
+        nextColumns[index] = {
+            ...nextColumns[index],
+            width: size.width,
+        };
+        return { columns: nextColumns };
+        });
+    };
+
     render(){
+
+        const columns = this.state.columns.map((col, index) => ({
+            ...col,
+            onHeaderCell: column => ({
+              width: column.width,
+              onResize: this.handleResize(index),
+            }),
+          }));
 
         let {sortedInfo} =this.state;
         sortedInfo = sortedInfo || {};
         
-        const columns = [
-            {
-                title: 'Deal Id',
-                dataIndex: 'id',
-                key: 'id',
-                sorter: (a,b) => a.id - b.id,
-                sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order,
-                ellipsis: true,
-            },
-            {
-                title: 'Deal Name',
-                dataIndex: 'name',
-                key: 'name',
-                sorter: (a, b) => a.name.localeCompare(b.name),
-                    sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-                    ellipsis: true,
-            },
-            {
-                title: 'Deal Rate',
-                dataIndex: 'rate',
-                key: 'rate',
-                sorter: (a, b) => a.rate.localeCompare(b.rate),
-                    sortOrder: sortedInfo.columnKey === 'rate' && sortedInfo.order,
-                    ellipsis: true,
-            },
-            {
-                title: 'Deal Type',
-                dataIndex: 'type',
-                key: 'type',
-                render: type => this.mapDealtype(type),
-
-                // sorter: (a, b) => a.dealtype.localeCompare(b.dealtype),
-                //     sortOrder: sortedInfo.columnKey === 'dealrate' && sortedInfo.order,
-                //     ellipsis: true,
-            },
-            {
-                title: 'Deal Option',
-                dataIndex: 'options',
-                key: 'options',
-                render: options => this.mapDealOption(options),
-                sorter: (a,b) => a.options - b.options,
-                sortOrder: sortedInfo.columnKey === 'options' && sortedInfo.order,
-                // sorter: (c, d) => c.options.localeCompare(d.options),
-                //     sortOrder: sortedInfo.columnKey === 'options' && sortedInfo.order,
-                    ellipsis: true,
-            },
-            {
-                title: 'Edit',
-                dataIndex: 'edit',
-                key: 'edit',
-                render: (text,record) => <EditFilled onClick={() => this.editDeal(record.id)}/>, 
-            },
-            {
-                title: 'Delete',
-                dataIndex: 'delete',
-                key: 'delete',
-                render: (text, record) => 
-                    <Popconfirm
-                        title="Are you sure delete this entry?"
-                        onConfirm = {this.deleteDeal.bind(this,record.id) }
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <DeleteFilled/> 
-                    </Popconfirm>,
-            }
-        ];
+        
         return(
             <div>
                 <div className='topline'>
                     Deal Management
                 </div>
                 
-                <Form className='formset' >
+                <div className="setcrumb">
+                    <Breadcrumb>
+                        <Breadcrumb.Item>Environment Setup</Breadcrumb.Item>
+                        <Breadcrumb.Item>Deal Management</Breadcrumb.Item>
+                    </Breadcrumb>
+                </div>
+                
+                <Form className="formset" >
+                
                     <Form.Item>
                   <div className="highlight">
                             <Button type="primary" onClick={() => this.addDeal()}> 
@@ -186,16 +299,19 @@ class DealManagement extends Component{
                             </Button>
                             </div>
                     </Form.Item>
-                    
+                    <center>
                     <Form.Item>
                         <Table 
                             columns={columns}
                             dataSource={this.state.deals}
                             bordered
                             id="students"
+                            size="small"
+                            style={{width:1000}}
                             onChange={this.handleChange}
                         />
-                    </Form.Item>    
+                    </Form.Item>  
+                    </center>  
                 </Form>
             </div>
         )
