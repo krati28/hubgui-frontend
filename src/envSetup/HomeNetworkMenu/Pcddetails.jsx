@@ -56,7 +56,7 @@ class Pcddetails extends Component {
                     title: 'SAP Id',
                     dataIndex: 'sap_id',
                     key: 'sap_id',
-                    width:60,
+                    width:70,
                     sorter: (a, b) => a.sap_id- b.sap_id,
                     //sortOrder: sortedInfo.columnKey === 'sap_id' && sortedInfo.order,
                     ellipsis: true,
@@ -83,6 +83,7 @@ class Pcddetails extends Component {
                     dataIndex: 'ssn',
                     key: 'ssn',
                     width:60,
+                    // ...this.getColumnSearchProps('ssn'),
                     filters:[
                         {text:'HLR',value:6},
                         {text:'VLR',value:7},
@@ -294,22 +295,22 @@ render(){
             <div  >
                 
               <div className='topline'>Point Code Details</div>
-                <Form className="formset">
-                
+              <div className="setcrumb">
                 <Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
                 <Breadcrumb.Item key="homenetwork">
                     <NavLink to="/environmentSetup-homenetwork">Home Network</NavLink>
                 </Breadcrumb.Item>  
                 <Breadcrumb.Item>Point Code Details</Breadcrumb.Item>
+                </div>
+                <Form className="formset">
                 
+                <center>
                     <Form.Item>
-                  <div className="highlight">
                     <Button  type="primary" onClick={() => this.addPcd()}>Add
                         </Button>
-                        </div>
                         
                         </Form.Item>
-                        <center>
+                        
                         <Form.Item >
                     
                         <Table
@@ -318,7 +319,7 @@ render(){
                         id="students"
                         bordered 
                         size="small" 
-                        style={{width:1000}}
+                        style={{width:1100}}
                         onChange={this.handleChange}  />
                     </Form.Item>
                     </center>

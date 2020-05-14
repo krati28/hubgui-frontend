@@ -36,7 +36,7 @@ class OperatorCluster extends Component{
                     title: 'Cluster Name',
                     dataIndex: 'cluster_name',
                     key: 'cluster_name',
-                    width:250,
+                    width:150,
                     ...this.getColumnSearchProps('cluster_name'),
                     sorter: (a, b) => a.cluster_name.localeCompare(b.cluster_name),
                     // sortOrder: sortedInfo.columnKey === 'cluster_name' && sortedInfo.order,
@@ -46,7 +46,7 @@ class OperatorCluster extends Component{
                     title: 'Cluster Type',
                     dataIndex: 'cluster_type',
                     key: 'cluster_type',   
-                    width:250,
+                    width:150,
                      filters:[
                         {text:'Default',value:1},
                         {text:'Roaming',value:2},
@@ -69,7 +69,7 @@ class OperatorCluster extends Component{
                     title: 'Delete',
                     dataIndex: 'delete',
                     key: 'delete',
-                    width:50,
+                    width:70,
                     render: (text, record) => <Popconfirm
                     title="Are you sure delete this entry?"
                     onConfirm={this.deleteUser.bind(this,record.cluster_id)}
@@ -243,28 +243,11 @@ class OperatorCluster extends Component{
                 </div>
                 <Form className='formset' >
                     
+                <center>
                     <Form.Item>
-                        <div className="highlight">
                         <Button type="primary" onClick={() => this.addUser()}>Add
                         </Button>
-                        </div>
                     </Form.Item>
-
-                {/* <Form.Item 
-                        label = "Search"
-                        name = "search">
-                            <Search placeholder="input search text"
-                            onSearch={value => console.log(value)}
-                            style={{ width: 200 }} enterButton />
-                    </Form.Item>
-
-                <Form.Item>
-                    <Radio.Group name="type"  onChange={this.onChangeradio} >
-                        <Radio value={1} >CLuster Name</Radio>
-                        <Radio value={2}>Cluster Id</Radio>
-                    </Radio.Group>
-                    </Form.Item> */}
-                    <center>
                     <Form.Item>
                         <Table
                             columns={columns} 
@@ -273,7 +256,7 @@ class OperatorCluster extends Component{
                             bordered
                             onChange={this.handleChange} 
                             size="small"
-                            style={{width:1000}} />
+                            style={{width:700}} />
                     </Form.Item>
                     </center>
                 </Form>

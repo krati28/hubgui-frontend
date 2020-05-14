@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-
 import history from "../../History";
-import {PlusCircleFilled} from '@ant-design/icons';
-
-import {Form, Button, Select,Table} from 'antd';
+import {Form, Button, Select,Table,Radio} from 'antd';
 import '../../styling/Styletable.css';
+import { Tabs } from 'antd';
+
+const { TabPane } = Tabs;
 const {Option} = Select;
 
 class HomeNetwork extends Component{
@@ -12,7 +12,7 @@ class HomeNetwork extends Component{
     constructor(props) {
         super(props);
         this.state = {
-          selectValue: "",
+          selectValue: '',
         };
     
         this.handleDropdownChange = this.handleDropdownChange.bind(this);
@@ -22,25 +22,21 @@ class HomeNetwork extends Component{
 
     
     
-      handleDropdownChange(e) {
+  handleDropdownChange(e) {
         this.setState({ selectValue: e });
-        
-    if(e  === "2"){
-      history.push("/listpcd");
-    
-      
-    }
-    else  if(e  === "3"){
-     history.push("/listmnp")
-     
-    }
+        if(e=== "2"){
+          history.push("/listpcd");
+        }
+        else if(e === "3"){
+          history.push("/listmnp")
+        }
       }   
       add() {
         if(this.state.selectValue==="1"){
           //alert("add series");
           //window.localStorage.removeItem("ptcode_id");
         history.push('/add-series');
-    }
+      }
         if(this.state.selectValue==="2"){
               //window.localStorage.removeItem("ptcode_id");
             history.push('/add-pcd');
@@ -48,8 +44,8 @@ class HomeNetwork extends Component{
         if(this.state.selectValue==="3"){
           //window.localStorage.removeItem("ptcode_id");
         history.push('/add-mnp');
-    }
-         }
+      }
+   }
         
     render(){
        
@@ -77,38 +73,35 @@ class HomeNetwork extends Component{
              
             
             return(
-          <div >
-            
-            <div className='topline'>Home Network Elements</div>
-            <div className="abc">
-            <Form className='formset'>
-          <Form.Item 
-                        label = "Network Elements"
-                        
-            rules = {[{ 
-                            required: true}]}>
+                <div >
+                    <div className='topline'>Home Network Elements</div>
+                      <div className="abc">
+                      <Form className='formset'>
+                      {/* <Form.Item 
+                          label = "Network Elements"
+                        rules = {[{ 
+                            required: true}]}
+                      >
+                        <Select style={{width:"300px"}}
+                            placeholder="--select--" onChange={this.handleDropdownChange}>
+                            {/* <Option value="1">Series</Option> 
+                            <Option value="2">Point Code Details</Option>
+                            <Option value="3">MNP Gateway</Option>
+                          
+                        </Select> 
+                      </Form.Item> */}
+                      <Tabs  onChange={this.handleDropdownChange}>
+                      <TabPane tab="Series" key="1">
+                      </TabPane>
+                      <TabPane tab="Point Code Details" key="2">
+                      </TabPane>
+                      <TabPane tab="MNP Gateway" key="3">
+                      </TabPane>
+                      </Tabs>
               
-                    
-                <Select style={{width:"300px"}}
-                placeholder="--select--" onChange={this.handleDropdownChange}>
-                {/* <Option value="1">Series</Option> */}
-                <Option value="2">Point Code Details</Option>
-                <Option value="3">MNP Gateway</Option>
-               
-                </Select>
-              </Form.Item>
-              {/*<Button  icon={<PlusCircleFilled/>} onClick={() => this.add()}>ADD
-                </Button><br /><br/>
-                 <Table
-             columns={columns} 
-             //dataSource={this.state.pcd} 
-             //id="students"
-             bordered 
-             //onChange={this.handleChange}  
-             /> */}
-            </Form>
-              </div>
-              </div>
+                    </Form>
+                  </div>
+                </div>
 
                 
             );
@@ -118,4 +111,3 @@ class HomeNetwork extends Component{
 
 export default HomeNetwork;
 
- 

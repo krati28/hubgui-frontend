@@ -147,7 +147,7 @@ class Main extends Component{
                   </Menu>
                   </Sider>
                   
-                  <Content style={{height:570}}>
+                  <Content style={{height:640}}>
                       {/* <Route path="/" component={Welcome} /> */}
 
                     <Route path="/environmentSetup-homeNetwork" component={HomeNetwork}/>

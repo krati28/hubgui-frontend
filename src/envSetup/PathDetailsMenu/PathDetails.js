@@ -35,14 +35,14 @@ class PathDetails extends Component{
                   title: 'Path Name',
                   dataIndex: 'path_name',
                   key: 'path_name',
-                  width:250,
+                  width:150,
                   ...this.getColumnSearchProps('path_name'),
                   sorter: (a, b) => a.path_name.localeCompare(b.path_name),
                 //   sortOrder: sortedInfo.columnKey === 'path_name' && sortedInfo.order,
                   ellipsis: true,
                 },
                 {
-                  title:'Oc Compliance Flag',
+                  title:'Oc Compliance',
                   dataIndex: 'oc_compliance_flag',
                   key:'oc_compliance_flag',
                   width:170,
@@ -68,16 +68,18 @@ class PathDetails extends Component{
                 //   filteredValue: filteredInfo.interface_type || null,
                   onFilter: (value, record) => record.interface_type===value,
                 },
-                {
-                    title:'Supplier',
-                    dataIndex:'supplier',
-                    key:'supplier'
-                },
-                {
-                  title:'Billing Logic',
-                  dataIndex:'billing_logic',
-                  key:'billing_logic'
-              },
+              //   {
+              //       title:'Supplier',
+              //       dataIndex:'supplier',
+              //       key:'supplier',
+              //       width:100,
+              //   },
+              //   {
+              //     title:'Billing Logic',
+              //     dataIndex:'billing_logic',
+              //     key:'billing_logic',
+              //     width:100,
+              // },
                 {
                     title: 'Edit',
                     dataIndex: 'edit',
@@ -273,13 +275,12 @@ class PathDetails extends Component{
                 </Breadcrumb.Item> 
         </div>
         <Form className='formset' >
+          
+        <center>
             <Form.Item> 
-                <div className="highlight">
                 <Button type="primary" onClick={() => this.addPath()}>Add
                 </Button>
-                </div>
             </Form.Item>
-            <center>
             <Form.Item>
                 <Table
                     columns={columns} 

@@ -22,7 +22,7 @@ class DealManagement extends Component{
                     title: 'Deal Id',
                     dataIndex: 'id',
                     key: 'id',
-                    width:120,
+                    width:80,
                     sorter: (a,b) => a.id - b.id,
                     ...this.getColumnSearchProps('id'),
                     ellipsis: true,
@@ -31,7 +31,7 @@ class DealManagement extends Component{
                     title: 'Deal Name',
                     dataIndex: 'name',
                     key: 'name',
-                    width:200,
+                    width:150,
                     sorter: (a, b) => a.name.localeCompare(b.name),
                     ...this.getColumnSearchProps('name'),
                     ellipsis: true,
@@ -40,7 +40,7 @@ class DealManagement extends Component{
                     title: 'Deal Rate',
                     dataIndex: 'rate',
                     key: 'rate',
-                    width:100,
+                    width:80,
                     sorter: (a, b) => a.rate.localeCompare(b.rate),
                     ellipsis: true,
                 },
@@ -48,6 +48,7 @@ class DealManagement extends Component{
                     title: 'Deal Type',
                     dataIndex: 'type',
                     key: 'type',
+                    width:170,
                     filters:[
                         {text:"Customer",value:2},
                         {text:"Supplier", value:3},
@@ -66,7 +67,7 @@ class DealManagement extends Component{
                     title: 'Deal Option',
                     dataIndex: 'options',
                     key: 'options',
-                    width:150,
+                    width:130,
                     filters:[
                         {text:"Revenue Based",value:1},
                         {text:"Cost Based",value:2},
@@ -80,14 +81,14 @@ class DealManagement extends Component{
                     title: 'Edit',
                     dataIndex: 'edit',
                     key: 'edit',
-                    width:80,
+                    width:50,
                     render: (text,record) => <EditFilled onClick={() => this.editDeal(record.id)}/>, 
                 },
                 {
                     title: 'Delete',
                     dataIndex: 'delete',
                     key: 'delete',
-                    width:100,
+                    width:70,
                     render: (text, record) => 
                         <Popconfirm
                             title="Are you sure delete this entry?"
@@ -291,15 +292,13 @@ class DealManagement extends Component{
                 </div>
                 
                 <Form className="formset" >
-                
+                <center>
                     <Form.Item>
-                  <div className="highlight">
                             <Button type="primary" onClick={() => this.addDeal()}> 
                                 Add 
                             </Button>
-                            </div>
                     </Form.Item>
-                    <center>
+                    
                     <Form.Item>
                         <Table 
                             columns={columns}
@@ -307,7 +306,7 @@ class DealManagement extends Component{
                             bordered
                             id="students"
                             size="small"
-                            style={{width:1000}}
+                            style={{width:1050}}
                             onChange={this.handleChange}
                         />
                     </Form.Item>  

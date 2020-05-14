@@ -207,20 +207,20 @@ class MNPdetails extends Component {
           
             <div>
             <div className='topline'>MNP Gateway Details</div>
-              <Form className="formset">
+            <div className="setcrumb">
               <Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
                 <Breadcrumb.Item key="homenetwork">
                     <NavLink to="/environmentSetup-homenetwork">Home Network</NavLink>
                 </Breadcrumb.Item>  
-                <Breadcrumb.Item>MNP Gateway Details</Breadcrumb.Item>
+                <Breadcrumb.Item>MNP Gateway Details</Breadcrumb.Item></div>
+              <Form className="formset">
+                <center>
                   <Form.Item>
-                  <div className="highlight">
                <Button type="primary" onClick={() => this.addMNP()}>Add
                 </Button>
-                </div>
                 
                 </Form.Item>
-                <center>
+                
                 <Form.Item>
                <Table
                     columns={columns} 
