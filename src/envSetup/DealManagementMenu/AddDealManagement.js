@@ -573,13 +573,11 @@ class AddDealManagement extends Component{
                                         >
 
                                         <Button  type="primary"
-                                                // disabled={!this.state.name || !this.state.validity_prd || !this.state.rate
-                                                //     || !this.state.start_date || !this.state.type || !this.state.options
-                                                //     || !this.state.value}
+                                                disabled={!this.state.name || !this.state.validity_prd || !this.state.rate
+                                                   || !this.state.start_date || !this.state.type || !this.state.options
+                                                    || !this.state.value}
                                                     >
-                                                {/* // disabled={  !this.state.type}
-                                                // disabled={!this.state.name}
-                                                > */}
+                                                
                                             Save
                                         </Button>
                                     </Popconfirm>
