@@ -217,7 +217,7 @@ class AddOperatorCluster extends Component{
                                     >
                                     {this.state.list.map((test) => 
                                         <Option value={test.operator_name}> 
-                                        {test.operator_name} </Option> )}
+                                        {test.operator_name} { "--"} {test.operator_id} </Option> )}
                                 </Select>
                             </Form.Item>
                             <div className="buttonset">

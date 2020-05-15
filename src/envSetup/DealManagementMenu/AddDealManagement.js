@@ -91,7 +91,7 @@ class AddDealManagement extends Component{
         });
 
         let remainingDropdown = [];
-        fetch('http://localhost:8105/operator')
+        fetch('http://localhost:8105/operators')
             .then(response => {
                 return response.json();
             }).then(data => {
