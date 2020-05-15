@@ -237,7 +237,7 @@ class OperatorCluster extends Component{
                 <div className='topline'>Operator List</div>
                 <div className='setcrumb'>
                     
-<Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
+              <Breadcrumb.Item> Environment Setup </Breadcrumb.Item>
                 <Breadcrumb.Item key="pathDetails">Operator Cluster
                 </Breadcrumb.Item>  
                 </div>

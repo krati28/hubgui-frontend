@@ -31,7 +31,7 @@ class DealManagement extends Component{
                     title: 'Deal Name',
                     dataIndex: 'name',
                     key: 'name',
-                    width:150,
+                    width:100,
                     sorter: (a, b) => a.name.localeCompare(b.name),
                     ...this.getColumnSearchProps('name'),
                     ellipsis: true,
