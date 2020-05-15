@@ -58,7 +58,7 @@ class AddMNPGateway extends Component{
     componentDidMount() {
          this.loadmnp();
          let initialPlanets = [];
-             fetch('http://localhost:8101/mnpdetails')
+             fetch('http://localhost:8105/mnpdetails')
                  .then(response => {
                      return response.json();
                  }).then(data => {
